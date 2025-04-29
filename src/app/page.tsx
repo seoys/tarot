@@ -156,7 +156,7 @@ const LoadingIndicator = () => (
       />
     </div>
     <p className="text-white text-xl ml-4 font-serif italic">
-      카드를 읽는 중...
+      ✨🔮 당신을 분석 중... 🧙‍♂️✨
     </p>
   </div>
 );
