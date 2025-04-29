@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Button } from "@/components/ui/button";
-import {
+import { 
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -17,29 +18,45 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 
 import { analyzeTarotCards, TarotCard } from "@/services/tarot-card-analysis";
 
+const CARD_BACK_IMAGE = "/images/back.gif";
+
 const tarotCardsData = [
-  { name: "The Fool", imageUrl: "https://picsum.photos/200/300" },
-  { name: "The Magician", imageUrl: "https://picsum.photos/200/301" },
-  { name: "The High Priestess", imageUrl: "https://picsum.photos/200/302" },
-  { name: "The Empress", imageUrl: "https://picsum.photos/200/303" },
-  { name: "The Emperor", imageUrl: "https://picsum.photos/200/304" },
-  { name: "The Hierophant", imageUrl: "https://picsum.photos/200/305" },
-  { name: "The Lovers", imageUrl: "https://picsum.photos/200/306" },
-  { name: "The Chariot", imageUrl: "https://picsum.photos/200/307" },
-  { name: "Strength", imageUrl: "https://picsum.photos/200/308" },
-  { name: "The Hermit", imageUrl: "https://picsum.photos/200/309" },
-  { name: "Wheel of Fortune", imageUrl: "https://picsum.photos/200/310" },
-  { name: "Justice", imageUrl: "https://picsum.photos/200/311" },
-  { name: "The Hanged Man", imageUrl: "https://picsum.photos/200/312" },
-  { name: "Death", imageUrl: "https://picsum.photos/200/313" },
-  { name: "Temperance", imageUrl: "https://picsum.photos/200/314" },
-  { name: "The Devil", imageUrl: "https://picsum.photos/200/315" },
-  { name: "The Tower", imageUrl: "https://picsum.photos/200/316" },
-  { name: "The Star", imageUrl: "https://picsum.photos/200/317" },
-  { name: "The Moon", imageUrl: "https://picsum.photos/200/318" },
-  { name: "The Sun", imageUrl: "https://picsum.photos/200/319" },
-  { name: "Judgment", imageUrl: "https://picsum.photos/200/320" },
-  { name: "The World", imageUrl: "https://picsum.photos/200/321" },
+  { name: "The Fool", imageUrl: "/images/the-fool.png" },
+  { name: "The Magician", imageUrl: "/images/the-magician.png" },
+  { name: "The High Priestess", imageUrl: "/images/the-high-priestess.png" },
+  { name: "The Empress", imageUrl: "/images/the-empress.png" },
+  { name: "The Emperor", imageUrl: "/images/the-emperor.png" },
+  { name: "The Hierophant", imageUrl: "/images/the-hierophant.png" },
+  { name: "The Lovers", imageUrl: "/images/the-lovers.png" },
+  { name: "The Chariot", imageUrl: "/images/the-chariot.png" },
+  { name: "Strength", imageUrl: "/images/strength.png" },
+  { name: "The Hermit", imageUrl: "/images/the-hermit.png" },
+  { name: "Wheel of Fortune", imageUrl: "/images/wheel-of-fortune.png" },
+  { name: "Justice", imageUrl: "/images/justice.png" },
+  { name: "The Hanged Man", imageUrl: "/images/the-hanged-man.png" },
+  { name: "Death", imageUrl: "/images/death.png" },
+  { name: "Temperance", imageUrl: "/images/temperance.png" },
+  { name: "The Devil", imageUrl: "/images/the-devil.png" },
+  { name: "The Tower", imageUrl: "/images/the-tower.png" },
+  { name: "The Star", imageUrl: "/images/the-star.png" },
+  { name: "The Moon", imageUrl: "/images/the-moon.png" },
+  { name: "The Sun", imageUrl: "/images/the-sun.png" },
+  { name: "Judgment", imageUrl: "/images/judgement.png" },
+  { name: "The World", imageUrl: "/images/the-world.png" },
+  { name: "Ace of Wands", imageUrl: "/images/ace-of-wands.png" },
+  { name: "Two of Wands", imageUrl: "/images/two-of-wands.png" },
+  { name: "Three of Wands", imageUrl: "/images/three-of-wands.png" },
+  { name: "Four of Wands", imageUrl: "/images/four-of-wands.png" },
+  { name: "Five of Wands", imageUrl: "/images/five-of-wands.png" },
+  { name: "Six of Wands", imageUrl: "/images/six-of-wands.png" },
+  { name: "Seven of Wands", imageUrl: "/images/seven-of-wands.png" },
+  { name: "Eight of Wands", imageUrl: "/images/eight-of-wands.png" },
+  { name: "Nine of Wands", imageUrl: "/images/nine-of-wands.png" },
+  { name: "Ten of Wands", imageUrl: "/images/ten-of-wands.png" },
+  { name: "Page of Wands", imageUrl: "/images/page-of-wands.png" },
+  { name: "Knight of Wands", imageUrl: "/images/knight-of-wands.png" },
+  { name: "Queen of Wands", imageUrl: "/images/queen-of-wands.png" },
+  { name: "King of Wands", imageUrl: "/images/king-of-wands.png" }
 ];
 
 function shuffleArray<T>(array: T[]): T[] {
@@ -51,14 +68,47 @@ function shuffleArray<T>(array: T[]): T[] {
   return newArray;
 }
 
+interface CardPosition {
+  x: number;
+  y: number;
+  rotate: number;
+}
+
 export default function Home() {
   const [shuffledCards, setShuffledCards] = useState(tarotCardsData);
   const [selectedCards, setSelectedCards] = useState<string[]>([]);
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
   const [cardInterpretations, setCardInterpretations] = useState<TarotCard[]>([]);
+  const [cardPositions, setCardPositions] = useState<Record<string, CardPosition>>({});
+  const [isShuffling, setIsShuffling] = useState(false);
 
   useEffect(() => {
     setShuffledCards(shuffleArray(tarotCardsData));
+
+    const positions: Record<string, CardPosition> = {};
+    tarotCardsData.forEach((card, index) => {
+      const angle = (index / tarotCardsData.length) * Math.PI * 2;
+      const radius = 100;
+      positions[card.name] = {
+        x: radius * Math.cos(angle) + Math.random() * 50 - 25,
+        y: radius * Math.sin(angle) + Math.random() * 50 - 25,
+        rotate: Math.random() * 30 - 15,
+      };
+    });
+    setCardPositions(positions);
+
+    const timeout = setTimeout(() => {
+      setCardPositions({});
+    }, 100);
+
+    return () => clearTimeout(timeout);
+
+  }, [isShuffling]);
+
+  useEffect(() => {
+    if(!isShuffling){
+        setShuffledCards(shuffleArray(tarotCardsData));
+    }
   }, []);
 
   const handleShuffle = () => {
@@ -88,24 +138,33 @@ export default function Home() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4">
-      <h1 className="text-3xl font-semibold mb-4 text-gold-500">Tarot Reader</h1>
+      <h1 className="text-3xl font-semibold mb-4 text-gold-500 relative z-10">Your Tarot Cards</h1>
 
-      <Button onClick={handleShuffle} className="mb-4 bg-secondary hover:bg-accent text-foreground">Shuffle Cards</Button>
+      <Button onClick={() => {
+        setIsShuffling(true);
+        setTimeout(() => setIsShuffling(false), 1000)
+      }} className="mb-4 bg-secondary hover:bg-accent text-foreground relative z-10">Shuffle Cards</Button>
 
-      <div className="grid grid-cols-5 gap-4">
+      <div className={`grid grid-cols-5 gap-4 transition-all duration-1000 ${isShuffling ? 'opacity-50' : 'opacity-100'}`}>
         {shuffledCards.map((card) => (
           <div
+            style={cardPositions[card.name] ? { transform: `translate(${cardPositions[card.name].x}px, ${cardPositions[card.name].y}px) rotate(${cardPositions[card.name].rotate}deg)` } : {}}
+
             key={card.name}
             className={`relative rounded-md shadow-md cursor-pointer transition-transform duration-200 ${
               isCardSelected(card.name) ? 'transform rotate-3' : ''
             }`}
             onClick={() => toggleCardSelection(card.name)}
           >
-            <img
-              src={card.imageUrl}
+            <Image
+              src={isCardSelected(card.name) ? card.imageUrl : CARD_BACK_IMAGE}
               alt={card.name}
-              className="rounded-md w-40 h-60 object-cover"
+              className="rounded-md object-cover"
+              width={160}
+              height={240}
+              
             />
+
             {isCardSelected(card.name) && (
               <div className="absolute inset-0 bg-gold-500 opacity-20 rounded-md"></div>
             )}
