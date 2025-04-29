@@ -11,7 +11,7 @@ module.exports = {
       max_memory_restart: "1G", // 최대 메모리
       env: {
         NODE_ENV: "production",
-        PORT: 10040, // 포트 번호
+        PORT: 10060, // 포트 번호
       },
     },
   ],
