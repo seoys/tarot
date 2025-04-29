@@ -506,6 +506,8 @@ export default function Home() {
                 onClick={() => {
                   setIsOutputModalOpen(false);
                   setSelectedCards([]);
+                  setCardInterpretations(null);
+                  setQuestion("");
                 }}
                 aria-label="닫기"
               >
@@ -522,6 +524,8 @@ export default function Home() {
                 onClick={() => {
                   setIsOutputModalOpen(false);
                   setSelectedCards([]);
+                  setCardInterpretations(null);
+                  setQuestion("");
                 }}
               >
                 닫기
