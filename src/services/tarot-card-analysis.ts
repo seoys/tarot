@@ -25,7 +25,7 @@ interface TarotCardData {
  */
 export async function analyzeTarotCards(question: string, TarotCardData: TarotCardData[]): Promise<TarotCard> {
   try {
-    const response = await fetch('https://n8n.sosohappy.synology.me/webhook-test/f53fb29f-c619-4fc1-bd01-6c863e98eb12', {
+    const response = await fetch('https://n8n.sosohappy.synology.me/webhook/f53fb29f-c619-4fc1-bd01-6c863e98eb12', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

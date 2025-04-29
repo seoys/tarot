@@ -154,24 +154,10 @@ export default function Home() {
       };
     });
 
-    const selectedCardDetailsWithQuestion = {
-      question: question,
-      TarotCardData: selectedCardDetails
-    }
 
-    // console.log(selectedCardDetails);
+    const interpretations = await analyzeTarotCards(question, selectedCardDetails);
 
-    // const interpretations = await analyzeTarotCards(selectedCardDetails.map(card => card.name));
-    
-    // const interpretationsWithQuestion = interpretations.map(interpretation => ({
-    //   ...interpretation,
-    //   question: question
-    // }));
-
-    const interpretations = await analyzeTarotCards(selectedCardDetailsWithQuestion);
-
-
-    setCardInterpretations(selectedCardDetailsWithQuestion);
+    setCardInterpretations(interpretations);
   };
 
   const clearInterpretations = () => {
