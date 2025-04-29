@@ -79,10 +79,10 @@ importers:
         version: 1.2.4(@types/react-dom@18.3.6(@types/react@18.3.20))(@types/react@18.3.20)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tanstack-query-firebase/react':
         specifier: ^1.0.5
-        version: 1.0.7(@tanstack/react-query@5.74.9(react@18.3.1))(firebase@11.6.1)
+        version: 1.0.7(@tanstack/react-query@5.74.7(react@18.3.1))(firebase@11.6.1)
       '@tanstack/react-query':
         specifier: ^5.66.0
-        version: 5.74.9(react@18.3.1)
+        version: 5.74.7(react@18.3.1)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -1547,11 +1547,11 @@ packages:
       '@tanstack/react-query': ^5
       firebase: ^11.3.0
 
-  '@tanstack/query-core@5.74.9':
-    resolution: {integrity: sha512-qmjXpWyigDw4SfqdSBy24FzRvpBPXlaSbl92N77lcrL+yvVQLQkf0T6bQNbTxl9IEB/SvVFhhVZoIlQvFnNuuw==}
+  '@tanstack/query-core@5.74.7':
+    resolution: {integrity: sha512-X3StkN/Y6KGHndTjJf8H8th7AX4bKfbRpiVhVqevf0QWlxl6DhyJ0TYG3R0LARa/+xqDwzU9mA4pbJxzPCI29A==}
 
-  '@tanstack/react-query@5.74.9':
-    resolution: {integrity: sha512-F8xCXDQRDgsPzLzX9+d6ycNoITAIU2bycc1idZd06bt/GjN1quEJDjHvEDWZGoVn0A/ZmntVrYv6TE0kR7c7LA==}
+  '@tanstack/react-query@5.74.7':
+    resolution: {integrity: sha512-u4o/RIWnnrq26orGZu2NDPwmVof1vtAiiV6KYUXd49GuK+8HX+gyxoAYqIaZogvCE1cqOuZAhQKcrKGYGkrLxg==}
     peerDependencies:
       react: ^18 || ^19
 
@@ -4959,16 +4959,16 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  '@tanstack-query-firebase/react@1.0.7(@tanstack/react-query@5.74.9(react@18.3.1))(firebase@11.6.1)':
+  '@tanstack-query-firebase/react@1.0.7(@tanstack/react-query@5.74.7(react@18.3.1))(firebase@11.6.1)':
     dependencies:
-      '@tanstack/react-query': 5.74.9(react@18.3.1)
+      '@tanstack/react-query': 5.74.7(react@18.3.1)
       firebase: 11.6.1
 
-  '@tanstack/query-core@5.74.9': {}
+  '@tanstack/query-core@5.74.7': {}
 
-  '@tanstack/react-query@5.74.9(react@18.3.1)':
+  '@tanstack/react-query@5.74.7(react@18.3.1)':
     dependencies:
-      '@tanstack/query-core': 5.74.9
+      '@tanstack/query-core': 5.74.7
       react: 18.3.1
 
   '@tootallnate/once@2.0.0': {}

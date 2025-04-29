@@ -3,13 +3,18 @@
  */
 export interface TarotCard {
   /**
-   * The name of the Tarot card.
+   * The question that the user asked.
    */
-  name: string;
+  question: string;
   /**
-   * A brief interpretation of the Tarot card.
+   * The data of the Tarot card.
    */
-  interpretation: string;
+  TarotCardData: TarotCardData[];
+}
+
+interface TarotCardData {
+  name: string;
+  isReversed: boolean;
 }
 
 /**
@@ -18,23 +23,29 @@ export interface TarotCard {
  * @param cardNames An array of Tarot card names to analyze.
  * @returns A promise that resolves to an array of TarotCard objects containing the interpretation for each card.
  */
-export async function analyzeTarotCards(cardNames: string[]): Promise<TarotCard[]> {
+export async function analyzeTarotCards(question: string, TarotCardData: TarotCardData[]): Promise<TarotCard> {
   try {
-    const response = await fetch('/api/tarot', {
+    const response = await fetch('https://n8n.sosohappy.synology.me/webhook/f53fb29f-c619-4fc1-bd01-6c863e98eb12', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ cardNames }),
+      body: JSON.stringify({ question, TarotCardData }),
     });
     if (!response.ok) {
       console.error('Error fetching tarot card interpretations:', response.status);
-      return [];
+      return {
+        question: '',
+        TarotCardData: []
+      };
     }
-    const data: TarotCard[] = await response.json();
+    const data: TarotCard = await response.json();
     return data;
   } catch (error) {
     console.error('Error fetching tarot card interpretations:', error);
-    return [];
+    return {
+      question: '',
+      TarotCardData: []
+    };
   }
 }

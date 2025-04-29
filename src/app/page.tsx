@@ -3,7 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Button } from "@/components/ui/button";
-import { 
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -20,7 +22,13 @@ import { analyzeTarotCards, TarotCard } from "@/services/tarot-card-analysis";
 
 const CARD_BACK_IMAGE = "/images/back.gif";
 
-const tarotCardsData = [
+interface TarotCardData {
+  name: string;
+  imageUrl: string;
+  isReversed?: boolean;
+}
+
+const tarotCardsData: TarotCardData[] = [
   { name: "The Fool", imageUrl: "/images/the-fool.png" },
   { name: "The Magician", imageUrl: "/images/the-magician.png" },
   { name: "The High Priestess", imageUrl: "/images/the-high-priestess.png" },
@@ -68,6 +76,13 @@ function shuffleArray<T>(array: T[]): T[] {
   return newArray;
 }
 
+function shuffleWithReversed(cards: TarotCardData[]): TarotCardData[] {
+  return shuffleArray(cards).map(card => ({
+    ...card,
+    isReversed: Math.random() < 0.5
+  }));
+}
+
 interface CardPosition {
   x: number;
   y: number;
@@ -75,15 +90,15 @@ interface CardPosition {
 }
 
 export default function Home() {
-  const [shuffledCards, setShuffledCards] = useState(tarotCardsData);
+  const [shuffledCards, setShuffledCards] = useState<TarotCardData[]>(tarotCardsData);
   const [selectedCards, setSelectedCards] = useState<string[]>([]);
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
-  const [cardInterpretations, setCardInterpretations] = useState<TarotCard[]>([]);
+  const [cardInterpretations, setCardInterpretations] = useState<TarotCard>();
   const [cardPositions, setCardPositions] = useState<Record<string, CardPosition>>({});
   const [isShuffling, setIsShuffling] = useState(false);
-
+  const [question, setQuestion] = useState('');
   useEffect(() => {
-    setShuffledCards(shuffleArray(tarotCardsData));
+    setShuffledCards(shuffleWithReversed(tarotCardsData));
 
     const positions: Record<string, CardPosition> = {};
     tarotCardsData.forEach((card, index) => {
@@ -107,12 +122,12 @@ export default function Home() {
 
   useEffect(() => {
     if(!isShuffling){
-        setShuffledCards(shuffleArray(tarotCardsData));
+        setShuffledCards(shuffleWithReversed(tarotCardsData));
     }
   }, []);
 
   const handleShuffle = () => {
-    setShuffledCards(shuffleArray(tarotCardsData));
+    setShuffledCards(shuffleWithReversed(tarotCardsData));
     setSelectedCards([]);
   };
 
@@ -125,31 +140,61 @@ export default function Home() {
   };
 
   const handleConfirmSelection = async () => {
+    if(question === ''){
+      alert('질문을 입력해주세요');
+      return;
+    }
     setIsConfirmationOpen(false);
-    const interpretations = await analyzeTarotCards(selectedCards);
+
+    const selectedCardDetails = selectedCards.map(cardName => {
+      const card = shuffledCards.find(c => c.name === cardName);
+      return {
+        name: cardName,
+        isReversed: card?.isReversed || false
+      };
+    });
+
+
+    const interpretations = await analyzeTarotCards(question, selectedCardDetails);
+
     setCardInterpretations(interpretations);
   };
 
   const clearInterpretations = () => {
-    setCardInterpretations([]);
+    setCardInterpretations({
+      question: '',
+      TarotCardData: []
+    });
   };
 
   const isCardSelected = (cardName: string) => selectedCards.includes(cardName);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4">
-      <h1 className="text-3xl font-semibold mb-4 text-gold-500 relative z-10">Your Tarot Cards</h1>
+      <div className="w-full max-w-md mb-6 relative z-10 text-center">
+        <Label htmlFor="question" className="text-foreground mb-2 block font-serif italic">
+          무엇이 알고 싶으신가요?
+        </Label>
+        <Input
+          id="question"
+          placeholder="타로카드로 알아보고 싶은 질문을 입력해주세요"
+          className="w-full bg-background text-foreground text-center font-serif"
+          value={question}
+          onChange={(e) => setQuestion(e.target.value)}
+        />
+      </div>
 
       <Button onClick={() => {
         setIsShuffling(true);
         setTimeout(() => setIsShuffling(false), 1000)
       }} className="mb-4 bg-secondary hover:bg-accent text-foreground relative z-10">Shuffle Cards</Button>
 
+      
+
       <div className={`grid grid-cols-5 gap-4 transition-all duration-1000 ${isShuffling ? 'opacity-50' : 'opacity-100'}`}>
         {shuffledCards.map((card) => (
           <div
             style={cardPositions[card.name] ? { transform: `translate(${cardPositions[card.name].x}px, ${cardPositions[card.name].y}px) rotate(${cardPositions[card.name].rotate}deg)` } : {}}
-
             key={card.name}
             className={`relative rounded-md shadow-md cursor-pointer transition-transform duration-200 ${
               isCardSelected(card.name) ? 'transform rotate-3' : ''
@@ -159,10 +204,9 @@ export default function Home() {
             <Image
               src={isCardSelected(card.name) ? card.imageUrl : CARD_BACK_IMAGE}
               alt={card.name}
-              className="rounded-md object-cover"
+              className={`rounded-md object-cover ${card.isReversed && isCardSelected(card.name) ? 'rotate-180' : ''}`}
               width={160}
               height={240}
-              
             />
 
             {isCardSelected(card.name) && (
@@ -187,29 +231,29 @@ export default function Home() {
             <AlertDialogHeader>
               <AlertDialogTitle>Confirm Card Selection</AlertDialogTitle>
               <AlertDialogDescription>
-                You have selected {selectedCards.length} cards. Are you sure you want to proceed?
+                {selectedCards.length}장의 카드를 선택하셨습니다. 진행하시겠습니까?
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel onClick={() => setIsConfirmationOpen(false)}>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={handleConfirmSelection}>Confirm</AlertDialogAction>
+              <AlertDialogCancel onClick={() => setIsConfirmationOpen(false)}>다시 선택</AlertDialogCancel>
+              <AlertDialogAction onClick={handleConfirmSelection}>진행</AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
       </div>
 
-      {cardInterpretations.length > 0 && (
+      {cardInterpretations && cardInterpretations.TarotCardData && cardInterpretations.TarotCardData.length > 0 && (
         <div className="mt-8 w-full max-w-4xl">
           <h2 className="text-2xl font-semibold mb-4 text-gold-500">Card Interpretations</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {cardInterpretations.map((card, index) => (
+            {cardInterpretations.TarotCardData.map((card, index) => (
               <Card key={index} className="bg-secondary">
                 <CardHeader>
                   <CardTitle className="text-xl font-semibold">{card.name}</CardTitle>
                   <CardDescription>Interpretation</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p>{card.interpretation}</p>
+                  <p>{card.isReversed ? '역방향' : '정방향'}</p>
                 </CardContent>
               </Card>
             ))}
