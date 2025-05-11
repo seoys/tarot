@@ -212,7 +212,7 @@ export default function Home() {
                 scale: 0.4 + Math.random() * 0.6, // Varying sizes
             };
         });
-        setCardPositions(gatherOvershootPositions);
+        // setCardPositions(gatherOvershootPositions);
 
         // Phase 2: Brief pause then quick gather towards center (overshoot)
         scatterTimeoutId = setTimeout(() => {
