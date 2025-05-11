@@ -554,7 +554,8 @@ export default function Home() {
                     </CardHeader>
                     <CardContent className="flex-grow pt-2">
                       <p className="text-foreground/90 text-sm">
-                        {card.description || "해석을 불러오는 중..."}
+                        {card.description ||
+                          "운명의 카드가 당신의 이야기를 풀어내는 중...✨"}
                       </p>
                     </CardContent>
                   </Card>
@@ -590,7 +591,7 @@ export default function Home() {
                 ×
               </button>
               <h3 className="text-xl font-bold text-primary mb-4 text-center drop-shadow">
-                🃏 타로 해석 결과
+                ✨🔮 당신의 운명을 보여드립니다 🔮✨
               </h3>
               <div className="whitespace-pre-line text-foreground leading-relaxed flex-1 text-sm">
                 {highlightOutput(cardInterpretations[0].output)}
