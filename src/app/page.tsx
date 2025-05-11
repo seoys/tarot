@@ -1,6 +1,7 @@
+
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -28,7 +29,7 @@ import {
   TarotCard,
   TarotCardData as ApiTarotCardData,
 } from "@/services/tarot-card-analysis";
-import { cn } from "@/lib/utils"; // Import cn
+import { cn } from "@/lib/utils";
 
 const CARD_BACK_IMAGE = "/images/back.gif";
 
@@ -38,7 +39,6 @@ interface TarotCardDisplayData {
   isReversed?: boolean;
 }
 
-// Map API structure if needed, or use directly if it matches TarotCardDisplayData
 const tarotCardsData: TarotCardDisplayData[] = [
   { name: "The Fool", imageUrl: "/images/the-fool.png" },
   { name: "The Magician", imageUrl: "/images/the-magician.png" },
@@ -142,7 +142,7 @@ interface CardPosition {
   x: number;
   y: number;
   rotate: number;
-  scale: number; // Add scale for dynamic animation
+  scale: number;
 }
 
 const LoadingIndicator = () => (
@@ -169,75 +169,114 @@ export default function Home() {
   const [selectedCards, setSelectedCards] = useState<string[]>([]);
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
   const [cardInterpretations, setCardInterpretations] =
-    useState<TarotCard | null>(null); // Initialize as null
+    useState<TarotCard | null>(null);
   const [cardPositions, setCardPositions] = useState<
     Record<string, CardPosition>
   >({});
   const [isShuffling, setIsShuffling] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); // Loading state
+  const [isLoading, setIsLoading] = useState(false);
   const [question, setQuestion] = useState("");
   const [isOutputModalOpen, setIsOutputModalOpen] = useState(false);
+  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
+    const handleResize = () => {
+      if (typeof window !== 'undefined') {
+        setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+      }
+    };
+    if (typeof window !== 'undefined') {
+      handleResize();
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (windowSize.width === 0 || windowSize.height === 0) return; // Don't run animations until window size is known
+
+    let scatterTimeoutId: NodeJS.Timeout;
+    let gatherTimeoutId: NodeJS.Timeout;
+
     if (isShuffling) {
-      const positions: Record<string, CardPosition> = {};
+      // Phase 1: Scatter
+      const scatterPositions: Record<string, CardPosition> = {};
       shuffledCards.forEach((card) => {
-        positions[card.name] = {
-          x: Math.random() * 400 - 200, // Wider spread
-          y: Math.random() * 300 - 150, // Wider spread
-          rotate: Math.random() * 360 - 180, // Full rotation
-          scale: 0.8 + Math.random() * 0.4, // Random scale between 0.8 and 1.2
+        scatterPositions[card.name] = {
+          x: (Math.random() - 0.5) * windowSize.width * 0.6,
+          y: (Math.random() - 0.5) * windowSize.height * 0.4,
+          rotate: Math.random() * 720 - 360,
+          scale: 0.7 + Math.random() * 0.6,
         };
       });
-      setCardPositions(positions);
+      setCardPositions(scatterPositions);
 
-      // After the shuffle animation (e.g., 1 second), reset positions to fan out
-      const shuffleAnimationTimeout = setTimeout(() => {
-        setCardPositions({}); // This will trigger the fan-out positioning
-      }, 1000); // Duration of the shuffle "scatter" animation
+      // Phase 2: Gather
+      scatterTimeoutId = setTimeout(() => {
+        const gatherPositions: Record<string, CardPosition> = {};
+        shuffledCards.forEach((card) => {
+          gatherPositions[card.name] = {
+            x: (Math.random() - 0.5) * 30,
+            y: (Math.random() - 0.5) * 30,
+            rotate: (Math.random() - 0.5) * 45,
+            scale: 1,
+          };
+        });
+        setCardPositions(gatherPositions);
 
-      return () => clearTimeout(shuffleAnimationTimeout);
+        // Phase 3: End Shuffling (will trigger fan-out)
+        gatherTimeoutId = setTimeout(() => {
+          setIsShuffling(false);
+        }, 500); // Duration for gather animation
+      }, 500); // Duration for scatter animation
     } else {
-      // When not shuffling, apply the fan-out positioning
-      // This part will run after the shuffle animation timeout or on initial load
+      // Fan-out positioning
       const fanPositions: Record<string, CardPosition> = {};
-      shuffledCards.slice(0, 78).forEach((card, index) => {
-        const angle =
-          (index - shuffledCards.slice(0, 78).length / 2 + 0.5) * 5; // Adjust angle for fanning
-        const radius = 180; // Adjust radius as needed
+      const cardsToFan = shuffledCards.slice(0, 78);
+      const numCards = cardsToFan.length;
+
+      const isSmallScreen = windowSize.width < 768;
+      const fanArc = isSmallScreen ? 140 : 120;
+      const radiusMultiplier = isSmallScreen ? 0.28 : 0.32;
+      const fanRadius = Math.min(windowSize.width * radiusMultiplier, windowSize.height * 0.35);
+      const yOffset = fanRadius * 0.7 - (windowSize.height * 0.1);
+
+
+      cardsToFan.forEach((card, index) => {
+        const angle = numCards > 1 ? (index - (numCards - 1) / 2) * (fanArc / (numCards - 1)) : 0;
         fanPositions[card.name] = {
-          x: radius * Math.sin((angle * Math.PI) / 180),
-          y: -radius * Math.cos((angle * Math.PI) / 180) + radius - 30, // Adjust y to fan out nicely
+          x: fanRadius * Math.sin((angle * Math.PI) / 180),
+          y: -fanRadius * Math.cos((angle * Math.PI) / 180) + yOffset,
           rotate: angle,
           scale: 1,
         };
       });
       setCardPositions(fanPositions);
     }
-  }, [isShuffling, shuffledCards]);
+    return () => {
+        clearTimeout(scatterTimeoutId);
+        clearTimeout(gatherTimeoutId);
+    };
+  }, [isShuffling, shuffledCards, windowSize]);
 
-  // Initial shuffle on mount
-  useEffect(() => {
-    handleShuffle();
+  const handleShuffle = useCallback(() => {
+    setIsLoading(false); // Reset loading state
+    setCardInterpretations(null); // Clear previous interpretations
+    setSelectedCards([]); // Clear selected cards
+    setQuestion(""); // Clear question
+
+    const newShuffledDeck = shuffleWithReversed(tarotCardsData);
+    setShuffledCards(newShuffledDeck);
+    setIsShuffling(true); // Start shuffling animation sequence
   }, []);
 
-  const handleShuffle = () => {
-    setIsShuffling(true); // Start shuffle animation
-    setSelectedCards([]);
-    setCardInterpretations(null);
+  useEffect(() => {
+    handleShuffle();
+  }, [handleShuffle]);
 
-    // Create a new shuffled deck
-    const newShuffledDeck = shuffleWithReversed(tarotCardsData);
-    setShuffledCards(newShuffledDeck); // Update the deck
-
-    // Reset shuffling state after animation duration
-    setTimeout(() => {
-      setIsShuffling(false); // End shuffle animation, positions will fan out via useEffect
-    }, 1200); // Total shuffle visual duration
-  };
 
   const toggleCardSelection = (cardName: string) => {
-    if (isLoading || isShuffling) return; // Prevent selection during loading/shuffling
+    if (isLoading || isShuffling) return;
 
     if (selectedCards.includes(cardName)) {
       setSelectedCards(selectedCards.filter((name) => name !== cardName));
@@ -249,17 +288,17 @@ export default function Home() {
   const handleConfirmSelection = async () => {
     if (question === "") {
       alert("질문을 입력해주세요");
-      setIsConfirmationOpen(false); // Close dialog
+      setIsConfirmationOpen(false);
       return;
     }
     if (selectedCards.length === 0) {
       alert("카드를 선택해주세요.");
-      setIsConfirmationOpen(false); // Close dialog
+      setIsConfirmationOpen(false);
       return;
     }
 
     setIsConfirmationOpen(false);
-    setIsLoading(true); // Start loading
+    setIsLoading(true);
 
     const selectedCardDetails: ApiTarotCardData[] = selectedCards.map(
       (cardName) => {
@@ -276,14 +315,13 @@ export default function Home() {
         question,
         selectedCardDetails
       );
-
-      setCardInterpretations(interpretationsResult); // Set interpretations
+      setCardInterpretations(interpretationsResult);
     } catch (error) {
       console.error("Failed to analyze tarot cards:", error);
-      alert("해석을 가져오는 중 오류가 발생했습니다."); // Show error to user
-      setCardInterpretations(null); // Reset interpretations on error
+      alert("해석을 가져오는 중 오류가 발생했습니다.");
+      setCardInterpretations(null);
     } finally {
-      setIsLoading(false); // Stop loading regardless of success or failure
+      setIsLoading(false);
     }
   };
 
@@ -293,20 +331,22 @@ export default function Home() {
 
   const isCardSelected = (cardName: string) => selectedCards.includes(cardName);
 
-  // interpretationsResult[0].output이 존재하면 모달 자동 오픈
   useEffect(() => {
     if (
       cardInterpretations &&
-      Array.isArray(cardInterpretations) &&
+      Array.isArray(cardInterpretations) && // Ensure it's the expected API output array
       cardInterpretations[0]?.output
     ) {
       setIsOutputModalOpen(true);
+    } else if (cardInterpretations && cardInterpretations.TarotCardData && cardInterpretations.TarotCardData.length > 0) {
+       // This condition handles the case where it's already processed TarotCard structure
+       // No direct modal opening here unless you intend to show details differently
     }
   }, [cardInterpretations]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gradient-to-b from-background to-secondary">
-      {isLoading && <LoadingIndicator />} {/* Show loading indicator */}
+      {isLoading && <LoadingIndicator />}
       <div className="w-full max-w-md mb-6 relative z-10 text-center">
         <Label
           htmlFor="question"
@@ -326,48 +366,38 @@ export default function Home() {
       <Button
         onClick={handleShuffle}
         className="mb-4 bg-secondary hover:bg-accent text-foreground relative z-10 shadow-md rounded-lg"
-        disabled={isLoading || isShuffling}
+        disabled={isShuffling || isLoading}
       >
-        {isShuffling ? "섞는 중..." : "카드 섞기"}
+        {isShuffling ? "섞는 중..." : "카드 다시 섞기"}
       </Button>
       <div className="relative w-full max-w-4xl h-96 mb-8 flex items-center justify-center">
-        {shuffledCards.slice(0, 78).map(
-          (
-            card,
-            index
-          ) => (
+        {shuffledCards.slice(0, 78).map((card, index) => {
+          const currentPosition = cardPositions[card.name] || { x:0, y:0, rotate:0, scale:1};
+          const transitionDuration = isShuffling ? '0.5s' : '0.8s';
+          return (
             <div
               key={card.name}
               onClick={() => toggleCardSelection(card.name)}
               className={cn(
-                "absolute transition-all duration-1000 ease-in-out cursor-pointer hover:z-20 hover:scale-110", // Slower, smoother transition
+                "absolute cursor-pointer hover:z-20 hover:scale-110",
                 isCardSelected(card.name)
                   ? "ring-4 ring-primary ring-offset-2 ring-offset-background rounded-lg z-10 scale-105"
                   : "shadow-lg",
-                isLoading || isShuffling ? "pointer-events-none opacity-70" : "opacity-100"
+                isLoading || isShuffling
+                  ? "pointer-events-none opacity-70"
+                  : "opacity-100"
               )}
-              style={
-                cardPositions[card.name]
-                  ? {
-                      transform: `translate(${cardPositions[card.name].x}px, ${
-                        cardPositions[card.name].y
-                      }px) rotate(${cardPositions[card.name].rotate}deg) scale(${cardPositions[card.name].scale})`,
-                      zIndex: isCardSelected(card.name) ? 999 : index,
-                      transition:
-                        "transform 1s ease-out, opacity 0.5s ease-out, z-index 0.3s, box-shadow 0.3s, ring 0.3s", // Longer transition for shuffle
-                    }
-                  : {
-                      // Default to center if no position (should be handled by useEffect)
-                      transform: `translate(0px, 0px) rotate(0deg) scale(1)`,
-                      zIndex: isCardSelected(card.name) ? 999 : index,
-                      transition:
-                        "transform 0.5s ease-in-out, z-index 0.3s, box-shadow 0.3s, ring 0.3s",
-                    }
-              }
+              style={{
+                transform: `translate(${currentPosition.x}px, ${currentPosition.y}px) rotate(${currentPosition.rotate}deg) scale(${currentPosition.scale})`,
+                zIndex: isCardSelected(card.name) ? 999 : index,
+                transition: `transform ${transitionDuration} cubic-bezier(0.25, 0.1, 0.25, 1), opacity 0.5s ease-out, z-index 0.3s, box-shadow 0.3s, ring 0.3s`,
+              }}
             >
               <Image
                 src={
-                  isCardSelected(card.name) || isShuffling ? card.imageUrl : CARD_BACK_IMAGE
+                  isCardSelected(card.name) || isShuffling
+                    ? card.imageUrl
+                    : CARD_BACK_IMAGE
                 }
                 alt={card.name}
                 className={cn(
@@ -385,8 +415,8 @@ export default function Home() {
                 <div className="absolute inset-0 bg-primary/20 rounded-md pointer-events-none"></div>
               )}
             </div>
-          )
-        )}
+          );
+        })}
       </div>
       <div className="mt-4 relative z-10">
         <AlertDialog
@@ -397,7 +427,7 @@ export default function Home() {
             <Button
               className="bg-primary hover:bg-accent text-primary-foreground rounded-lg shadow-md"
               disabled={selectedCards.length === 0 || isLoading || isShuffling}
-              onClick={() => setIsConfirmationOpen(true)} // Explicitly open dialog
+              onClick={() => setIsConfirmationOpen(true)}
             >
               선택 완료 ({selectedCards.length}/5)
             </Button>
@@ -509,7 +539,6 @@ export default function Home() {
             </div>
           </div>
         )}
-      {/* interpretationsResult[0].output 모달 */}
       {cardInterpretations &&
         Array.isArray(cardInterpretations) &&
         cardInterpretations[0]?.output &&
@@ -552,13 +581,9 @@ export default function Home() {
   );
 }
 
-/**
- * 해석 결과에서 **강조** 또는 _이탤릭_ 마크다운을 bold/italic으로 변환
- */
 function highlightOutput(text: string) {
-  // **강조** → <b>강조</b>, _이탤릭_ → <i>이탤릭</i>
   const bolded = text.replace(/\*\*(.*?)\*\*/g, "<b>$1</b>");
   const italicized = bolded.replace(/_(.+?)_/g, "<i>$1</i>");
-  constnewlines = italicized.replace(/\n/g, "<br />"); // Convert newlines to <br />
+  const newlines = italicized.replace(/\n/g, "<br />");
   return <span dangerouslySetInnerHTML={{ __html: newlines }} />;
 }
