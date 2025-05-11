@@ -142,6 +142,7 @@ interface CardPosition {
   x: number;
   y: number;
   rotate: number;
+  scale: number; // Add scale for dynamic animation
 }
 
 const LoadingIndicator = () => (
@@ -153,6 +154,7 @@ const LoadingIndicator = () => (
         width={100}
         height={150}
         className="rounded-lg shadow-lg"
+        data-ai-hint="card loading"
       />
     </div>
     <p className="text-white text-xl ml-4 font-serif italic">
@@ -177,42 +179,61 @@ export default function Home() {
   const [isOutputModalOpen, setIsOutputModalOpen] = useState(false);
 
   useEffect(() => {
-    setShuffledCards(shuffleWithReversed(tarotCardsData));
+    if (isShuffling) {
+      const positions: Record<string, CardPosition> = {};
+      shuffledCards.forEach((card) => {
+        positions[card.name] = {
+          x: Math.random() * 400 - 200, // Wider spread
+          y: Math.random() * 300 - 150, // Wider spread
+          rotate: Math.random() * 360 - 180, // Full rotation
+          scale: 0.8 + Math.random() * 0.4, // Random scale between 0.8 and 1.2
+        };
+      });
+      setCardPositions(positions);
 
-    const positions: Record<string, CardPosition> = {};
-    tarotCardsData.forEach((card, index) => {
-      const angle = (index / tarotCardsData.length) * Math.PI * 2;
-      const radius = 100; // Spread radius
-      positions[card.name] = {
-        x: radius * Math.cos(angle) + Math.random() * 50 - 25,
-        y: radius * Math.sin(angle) + Math.random() * 50 - 25,
-        rotate: Math.random() * 30 - 15,
-      };
-    });
-    setCardPositions(positions);
+      // After the shuffle animation (e.g., 1 second), reset positions to fan out
+      const shuffleAnimationTimeout = setTimeout(() => {
+        setCardPositions({}); // This will trigger the fan-out positioning
+      }, 1000); // Duration of the shuffle "scatter" animation
 
-    // Short timeout to apply initial positions, then clear for transition
-    const timeout = setTimeout(() => {
-      setCardPositions({});
-    }, 100);
-
-    return () => clearTimeout(timeout);
-  }, [isShuffling]); // Rerun when isShuffling changes
+      return () => clearTimeout(shuffleAnimationTimeout);
+    } else {
+      // When not shuffling, apply the fan-out positioning
+      // This part will run after the shuffle animation timeout or on initial load
+      const fanPositions: Record<string, CardPosition> = {};
+      shuffledCards.slice(0, 78).forEach((card, index) => {
+        const angle =
+          (index - shuffledCards.slice(0, 78).length / 2 + 0.5) * 5; // Adjust angle for fanning
+        const radius = 180; // Adjust radius as needed
+        fanPositions[card.name] = {
+          x: radius * Math.sin((angle * Math.PI) / 180),
+          y: -radius * Math.cos((angle * Math.PI) / 180) + radius - 30, // Adjust y to fan out nicely
+          rotate: angle,
+          scale: 1,
+        };
+      });
+      setCardPositions(fanPositions);
+    }
+  }, [isShuffling, shuffledCards]);
 
   // Initial shuffle on mount
   useEffect(() => {
-    handleShuffle(); // Use handleShuffle for consistency
+    handleShuffle();
   }, []);
 
   const handleShuffle = () => {
-    setIsShuffling(true);
-    setShuffledCards(shuffleWithReversed(tarotCardsData));
+    setIsShuffling(true); // Start shuffle animation
     setSelectedCards([]);
-    setCardInterpretations(null); // Clear interpretations on shuffle
-    // setQuestion(""); // Clear question on shuffle
+    setCardInterpretations(null);
+
+    // Create a new shuffled deck
+    const newShuffledDeck = shuffleWithReversed(tarotCardsData);
+    setShuffledCards(newShuffledDeck); // Update the deck
 
     // Reset shuffling state after animation duration
-    setTimeout(() => setIsShuffling(false), 1000); // Adjust duration as needed
+    setTimeout(() => {
+      setIsShuffling(false); // End shuffle animation, positions will fan out via useEffect
+    }, 1200); // Total shuffle visual duration
   };
 
   const toggleCardSelection = (cardName: string) => {
@@ -307,66 +328,58 @@ export default function Home() {
         className="mb-4 bg-secondary hover:bg-accent text-foreground relative z-10 shadow-md rounded-lg"
         disabled={isLoading || isShuffling}
       >
-        카드 섞기
+        {isShuffling ? "섞는 중..." : "카드 섞기"}
       </Button>
       <div className="relative w-full max-w-4xl h-96 mb-8 flex items-center justify-center">
         {shuffledCards.slice(0, 78).map(
           (
             card,
-            index // Show all 78 cards
+            index
           ) => (
             <div
               key={card.name}
               onClick={() => toggleCardSelection(card.name)}
               className={cn(
-                "absolute transition-all duration-500 ease-out cursor-pointer hover:z-20 hover:scale-110",
+                "absolute transition-all duration-1000 ease-in-out cursor-pointer hover:z-20 hover:scale-110", // Slower, smoother transition
                 isCardSelected(card.name)
                   ? "ring-4 ring-primary ring-offset-2 ring-offset-background rounded-lg z-10 scale-105"
                   : "shadow-lg",
-                isShuffling ? "opacity-50" : "opacity-100",
-                isLoading || isShuffling ? "pointer-events-none" : ""
+                isLoading || isShuffling ? "pointer-events-none opacity-70" : "opacity-100"
               )}
               style={
                 cardPositions[card.name]
                   ? {
-                      // 셔플 애니메이션 중 위치
                       transform: `translate(${cardPositions[card.name].x}px, ${
                         cardPositions[card.name].y
-                      }px) rotate(${cardPositions[card.name].rotate}deg)`,
-                      zIndex: isCardSelected(card.name) ? 999 : index, // 선택된 카드는 항상 맨 앞
+                      }px) rotate(${cardPositions[card.name].rotate}deg) scale(${cardPositions[card.name].scale})`,
+                      zIndex: isCardSelected(card.name) ? 999 : index,
                       transition:
-                        "transform 0.5s ease-out, opacity 0.5s ease-out",
+                        "transform 1s ease-out, opacity 0.5s ease-out, z-index 0.3s, box-shadow 0.3s, ring 0.3s", // Longer transition for shuffle
                     }
                   : {
-                      // 기본 원형 배치
-                      transform: `rotate(${
-                        index * (360 / shuffledCards.slice(0, 78).length)
-                      }deg) translateY(-150px) rotate(-${
-                        index * (360 / shuffledCards.slice(0, 78).length)
-                      }deg) ${
-                        isCardSelected(card.name) ? "scale(1.1)" : "scale(1)"
-                      }`,
-                      transformOrigin: "center 150px",
-                      zIndex: isCardSelected(card.name) ? 999 : index, // 선택된 카드는 항상 맨 앞
+                      // Default to center if no position (should be handled by useEffect)
+                      transform: `translate(0px, 0px) rotate(0deg) scale(1)`,
+                      zIndex: isCardSelected(card.name) ? 999 : index,
                       transition:
-                        "transform 0.3s ease-in-out, z-index 0.3s, box-shadow 0.3s, ring 0.3s",
+                        "transform 0.5s ease-in-out, z-index 0.3s, box-shadow 0.3s, ring 0.3s",
                     }
               }
             >
               <Image
                 src={
-                  isCardSelected(card.name) ? card.imageUrl : CARD_BACK_IMAGE
+                  isCardSelected(card.name) || isShuffling ? card.imageUrl : CARD_BACK_IMAGE
                 }
                 alt={card.name}
                 className={cn(
-                  "rounded-md object-cover w-16 h-auto border border-black/30", // Slightly smaller cards for fan layout
-                  card.isReversed && isCardSelected(card.name)
+                  "rounded-md object-cover w-16 h-auto border border-black/30",
+                  card.isReversed && (isCardSelected(card.name) || isShuffling)
                     ? "rotate-180"
                     : ""
                 )}
-                width={64} // Smaller width
-                height={96} // Adjust height proportionally
-                priority={index < 10} // Prioritize loading initial cards
+                width={64}
+                height={96}
+                priority={index < 10}
+                data-ai-hint="tarot card"
               />
               {isCardSelected(card.name) && (
                 <div className="absolute inset-0 bg-primary/20 rounded-md pointer-events-none"></div>
@@ -415,6 +428,7 @@ export default function Home() {
                       className={`rounded ${
                         card.isReversed ? "rotate-180" : ""
                       }`}
+                      data-ai-hint="tarot card selected"
                     />
                     <span>
                       {name}
@@ -467,6 +481,7 @@ export default function Home() {
                         className={`rounded-md ${
                           card.isReversed ? "rotate-180" : ""
                         }`}
+                        data-ai-hint="tarot card interpretation"
                       />
                       <CardTitle className="text-lg font-semibold mt-2 text-primary">
                         {card.name}
@@ -516,7 +531,7 @@ export default function Home() {
               <h3 className="text-xl font-bold text-primary mb-4 text-center drop-shadow">
                 🃏 타로 해석 결과
               </h3>
-              <div className="whitespace-pre-line text-black leading-relaxed flex-1">
+              <div className="whitespace-pre-line text-foreground leading-relaxed flex-1 text-sm">
                 {highlightOutput(cardInterpretations[0].output)}
               </div>
               <button
@@ -542,7 +557,8 @@ export default function Home() {
  */
 function highlightOutput(text: string) {
   // **강조** → <b>강조</b>, _이탤릭_ → <i>이탤릭</i>
-  const bolded = text.replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
+  const bolded = text.replace(/\*\*(.*?)\*\*/g, "<b>$1</b>");
   const italicized = bolded.replace(/_(.+?)_/g, "<i>$1</i>");
-  return <span dangerouslySetInnerHTML={{ __html: italicized }} />;
+  constnewlines = italicized.replace(/\n/g, "<br />"); // Convert newlines to <br />
+  return <span dangerouslySetInnerHTML={{ __html: newlines }} />;
 }
