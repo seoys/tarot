@@ -178,6 +178,8 @@ export default function Home() {
   const [question, setQuestion] = useState("");
   const [isOutputModalOpen, setIsOutputModalOpen] = useState(false);
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
+  const [cardTransitionDelays, setCardTransitionDelays] = useState<Record<string, number>>({});
+
 
   useEffect(() => {
     const handleResize = () => {
@@ -200,16 +202,34 @@ export default function Home() {
     let finalGatherTimeoutId: NodeJS.Timeout;
 
     if (isShuffling) {
+<<<<<<< HEAD
         // Phase 1: Scatter with more energy
+=======
+        // Generate random delays for each card for the scatter phase
+        const delays: Record<string, number> = {};
+        shuffledCards.forEach(card => {
+            delays[card.name] = Math.random() * 0.15; // Random delay up to 0.15s
+        });
+        setCardTransitionDelays(delays);
+
+        // Phase 1: Scatter
+>>>>>>> 5fe395f (줘)
         const scatterPositions: Record<string, CardPosition> = {};
         shuffledCards.forEach((card) => {
             const angle = Math.random() * Math.PI * 2; // Random angle
             const radius = windowSize.width * (0.4 + Math.random() * 0.4); // Scatter further, up to 80% of width
             scatterPositions[card.name] = {
+<<<<<<< HEAD
                 x: Math.cos(angle) * radius,
                 y: Math.sin(angle) * radius * (windowSize.height / windowSize.width) * 0.8, // Adjust for aspect ratio, scatter less vertically
                 rotate: (Math.random() - 0.5) * 1080, // Wild rotation
                 scale: 0.4 + Math.random() * 0.6, // Varying sizes
+=======
+                x: (Math.random() - 0.5) * windowSize.width * 0.95, 
+                y: (Math.random() - 0.5) * windowSize.height * 0.75, 
+                rotate: Math.random() * 1400 - 700, 
+                scale: 0.4 + Math.random() * 0.7, 
+>>>>>>> 5fe395f (줘)
             };
         });
         // setCardPositions(gatherOvershootPositions);
@@ -219,10 +239,17 @@ export default function Home() {
             const gatherOvershootPositions: Record<string, CardPosition> = {};
             shuffledCards.forEach((card) => {
                 gatherOvershootPositions[card.name] = {
+<<<<<<< HEAD
                     x: (Math.random() - 0.5) * 80,
                     y: (Math.random() - 0.5) * 80,
                     rotate: (Math.random() - 0.5) * 180,
                     scale: 1.2 + Math.random() * 0.3, // Overshoot scale
+=======
+                    x: (Math.random() - 0.5) * 50, 
+                    y: (Math.random() - 0.5) * 50,
+                    rotate: (Math.random() - 0.5) * 70, 
+                    scale: 1.15 + (Math.random() - 0.5) * 0.15, 
+>>>>>>> 5fe395f (줘)
                 };
             });
             setCardPositions(gatherOvershootPositions);
@@ -232,19 +259,32 @@ export default function Home() {
                 const finalGatherPositions: Record<string, CardPosition> = {};
                 shuffledCards.forEach((card) => {
                     finalGatherPositions[card.name] = {
+<<<<<<< HEAD
                         x: (Math.random() - 0.5) * 15,
                         y: (Math.random() - 0.5) * 15,
                         rotate: (Math.random() - 0.5) * 20,
+=======
+                        x: (Math.random() - 0.5) * 5, 
+                        y: (Math.random() - 0.5) * 5,
+                        rotate: (Math.random() - 0.5) * 5, 
+>>>>>>> 5fe395f (줘)
                         scale: 1,
                     };
                 });
                 setCardPositions(finalGatherPositions);
 
                 finalGatherTimeoutId = setTimeout(() => {
+<<<<<<< HEAD
                     setIsShuffling(false); // End shuffling, triggers fan-out
                 }, 350); // Settle duration
             }, 450); // Overshoot duration
         }, 800); // Scatter duration
+=======
+                    setIsShuffling(false);
+                }, 250); 
+            }, 300); 
+        }, 400); 
+>>>>>>> 5fe395f (줘)
     } else {
       // Fan-out positioning
       const fanPositions: Record<string, CardPosition> = {};
@@ -283,18 +323,25 @@ export default function Home() {
   }, [isShuffling, shuffledCards, windowSize]);
 
   const handleShuffle = useCallback(() => {
+<<<<<<< HEAD
     setIsLoading(false); // Reset loading state
     setCardInterpretations(null); // Clear previous interpretations
     setSelectedCards([]); // Clear selected cards
     // setQuestion(""); // Clear question
+=======
+    setIsLoading(false); 
+    setCardInterpretations(null); 
+    setSelectedCards([]); 
+    setQuestion(""); 
+>>>>>>> 5fe395f (줘)
 
     const newShuffledDeck = shuffleWithReversed(tarotCardsData);
     setShuffledCards(newShuffledDeck);
-    setIsShuffling(true); // Start shuffling animation sequence
+    setIsShuffling(true); 
   }, []);
 
   useEffect(() => {
-    handleShuffle(); // Initial shuffle when component mounts
+    handleShuffle(); 
   }, [handleShuffle]);
 
   const toggleCardSelection = (cardName: string) => {
@@ -398,12 +445,17 @@ export default function Home() {
       </Button>
       <div className="relative w-full max-w-4xl h-96 mb-8 flex items-center justify-center">
         {shuffledCards.slice(0, 78).map((card, index) => {
+<<<<<<< HEAD
           const currentPosition = cardPositions[card.name] || {
             x: 0,
             y: 0,
             rotate: 0,
             scale: 1,
           };
+=======
+          const currentPosition = cardPositions[card.name] || { x:0, y:0, rotate:0, scale:1};
+          const randomDelay = isShuffling ? (cardTransitionDelays[card.name] || 0) : 0;
+>>>>>>> 5fe395f (줘)
           return (
             <div
               key={card.name}
@@ -420,11 +472,21 @@ export default function Home() {
               style={{
                 transform: `translate(${currentPosition.x}px, ${currentPosition.y}px) rotate(${currentPosition.rotate}deg) scale(${currentPosition.scale})`,
                 zIndex: isCardSelected(card.name) ? 999 : index,
+<<<<<<< HEAD
                 transition: `transform ${
                   isShuffling
                     ? "0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)"
                     : "0.8s cubic-bezier(0.25, 0.1, 0.25, 1)"
                 }, opacity 0.5s ease-out, z-index 0.3s, box-shadow 0.3s, ring 0.3s`,
+=======
+                transition: `
+                  transform ${isShuffling ? '0.35s' : '0.8s'} ${isShuffling ? `cubic-bezier(0.3, 1.3, 0.3, 1.3) ${randomDelay}s` : 'cubic-bezier(0.25, 0.1, 0.25, 1)'},
+                  opacity 0.5s ease-out,
+                  z-index 0.3s,
+                  box-shadow 0.3s,
+                  ring 0.3s
+                `.trim().replace(/\s+/g, ' '),
+>>>>>>> 5fe395f (줘)
               }}
             >
               <Image
