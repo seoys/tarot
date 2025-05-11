@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
@@ -211,32 +210,19 @@ export default function Home() {
         };
       });
       setCardPositions(scatterPositions);
-        // Phase 1: Scatter with more energy
-        const scatterPositions: Record<string, CardPosition> = {};
-        shuffledCards.forEach((card) => {
-            const angle = Math.random() * Math.PI * 2; // Random angle
-            const radius = windowSize.width * (0.4 + Math.random() * 0.4); // Scatter further, up to 80% of width
-            scatterPositions[card.name] = {
-                x: Math.cos(angle) * radius,
-                y: Math.sin(angle) * radius * (windowSize.height / windowSize.width) * 0.8, // Adjust for aspect ratio, scatter less vertically
-                rotate: (Math.random() - 0.5) * 1080, // Wild rotation
-                scale: 0.4 + Math.random() * 0.6, // Varying sizes
-            };
-        });
-        setCardPositions(scatterPositions);
 
-        // Phase 2: Brief pause then quick gather towards center (overshoot)
-        scatterTimeoutId = setTimeout(() => {
-            const gatherOvershootPositions: Record<string, CardPosition> = {};
-            shuffledCards.forEach((card) => {
-                gatherOvershootPositions[card.name] = {
-                    x: (Math.random() - 0.5) * 80,
-                    y: (Math.random() - 0.5) * 80,
-                    rotate: (Math.random() - 0.5) * 180,
-                    scale: 1.2 + Math.random() * 0.3, // Overshoot scale
-                };
-            });
-            setCardPositions(gatherOvershootPositions);
+      // Phase 2: Gather Overshoot
+      scatterTimeoutId = setTimeout(() => {
+        const gatherOvershootPositions: Record<string, CardPosition> = {};
+        shuffledCards.forEach((card) => {
+          gatherOvershootPositions[card.name] = {
+            x: (Math.random() - 0.5) * 40, // Wider initial gather before snapping
+            y: (Math.random() - 0.5) * 40,
+            rotate: (Math.random() - 0.5) * 60, // More rotation during overshoot
+            scale: 1.1 + (Math.random() - 0.5) * 0.1, // Overshoot scale slightly
+          };
+        });
+        setCardPositions(gatherOvershootPositions);
 
         // Phase 3: Final Gather (Snap to place)
         gatherOvershootTimeoutId = setTimeout(() => {
@@ -250,18 +236,6 @@ export default function Home() {
             };
           });
           setCardPositions(finalGatherPositions);
-            // Phase 3: Final settle into a tight pile
-            gatherOvershootTimeoutId = setTimeout(() => {
-                const finalGatherPositions: Record<string, CardPosition> = {};
-                shuffledCards.forEach((card) => {
-                    finalGatherPositions[card.name] = {
-                        x: (Math.random() - 0.5) * 15,
-                        y: (Math.random() - 0.5) * 15,
-                        rotate: (Math.random() - 0.5) * 20,
-                        scale: 1,
-                    };
-                });
-                setCardPositions(finalGatherPositions);
 
           // Phase 4: End Shuffling (trigger fan-out)
           finalGatherTimeoutId = setTimeout(() => {
@@ -269,11 +243,6 @@ export default function Home() {
           }, 300); // Short delay before fanning out
         }, 350); // Duration for overshoot animation
       }, 450); // Duration for scatter animation
-                finalGatherTimeoutId = setTimeout(() => {
-                    setIsShuffling(false); // End shuffling, triggers fan-out
-                }, 350); // Settle duration
-            }, 450); // Overshoot duration
-        }, 800); // Scatter duration
     } else {
       // Fan-out positioning
       const fanPositions: Record<string, CardPosition> = {};
