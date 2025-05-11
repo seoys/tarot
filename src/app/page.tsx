@@ -432,14 +432,12 @@ export default function Home() {
             >
               <Image
                 src={
-                  isCardSelected(card.name) || isShuffling
-                    ? card.imageUrl
-                    : CARD_BACK_IMAGE
+                  isCardSelected(card.name) ? card.imageUrl : CARD_BACK_IMAGE
                 }
                 alt={card.name}
                 className={cn(
                   "rounded-md object-cover w-16 h-auto border border-black/30",
-                  card.isReversed && (isCardSelected(card.name) || isShuffling)
+                  card.isReversed && isCardSelected(card.name)
                     ? "rotate-180"
                     : ""
                 )}
