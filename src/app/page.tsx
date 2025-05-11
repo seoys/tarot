@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
@@ -186,49 +185,64 @@ export default function Home() {
       }
     };
     if (typeof window !== 'undefined') {
-      handleResize();
+      handleResize(); // Initial size
       window.addEventListener('resize', handleResize);
       return () => window.removeEventListener('resize', handleResize);
     }
   }, []);
 
   useEffect(() => {
-    if (windowSize.width === 0 || windowSize.height === 0) return; // Don't run animations until window size is known
+    if (windowSize.width === 0 || windowSize.height === 0) return;
 
     let scatterTimeoutId: NodeJS.Timeout;
-    let gatherTimeoutId: NodeJS.Timeout;
+    let gatherOvershootTimeoutId: NodeJS.Timeout;
+    let finalGatherTimeoutId: NodeJS.Timeout;
 
     if (isShuffling) {
-      // Phase 1: Scatter
-      const scatterPositions: Record<string, CardPosition> = {};
-      shuffledCards.forEach((card) => {
-        scatterPositions[card.name] = {
-          x: (Math.random() - 0.5) * windowSize.width * 0.6,
-          y: (Math.random() - 0.5) * windowSize.height * 0.4,
-          rotate: Math.random() * 720 - 360,
-          scale: 0.7 + Math.random() * 0.6,
-        };
-      });
-      setCardPositions(scatterPositions);
-
-      // Phase 2: Gather
-      scatterTimeoutId = setTimeout(() => {
-        const gatherPositions: Record<string, CardPosition> = {};
+        // Phase 1: Scatter
+        const scatterPositions: Record<string, CardPosition> = {};
         shuffledCards.forEach((card) => {
-          gatherPositions[card.name] = {
-            x: (Math.random() - 0.5) * 30,
-            y: (Math.random() - 0.5) * 30,
-            rotate: (Math.random() - 0.5) * 45,
-            scale: 1,
-          };
+            scatterPositions[card.name] = {
+                x: (Math.random() - 0.5) * windowSize.width * 0.9, // Increased range
+                y: (Math.random() - 0.5) * windowSize.height * 0.7, // Increased range
+                rotate: Math.random() * 1200 - 600, // More intense rotation
+                scale: 0.5 + Math.random() * 0.8, // scale from 0.5 to 1.3
+            };
         });
-        setCardPositions(gatherPositions);
+        setCardPositions(scatterPositions);
 
-        // Phase 3: End Shuffling (will trigger fan-out)
-        gatherTimeoutId = setTimeout(() => {
-          setIsShuffling(false);
-        }, 500); // Duration for gather animation
-      }, 500); // Duration for scatter animation
+        // Phase 2: Gather Overshoot
+        scatterTimeoutId = setTimeout(() => {
+            const gatherOvershootPositions: Record<string, CardPosition> = {};
+            shuffledCards.forEach((card) => {
+                gatherOvershootPositions[card.name] = {
+                    x: (Math.random() - 0.5) * 40, // Wider initial gather before snapping
+                    y: (Math.random() - 0.5) * 40,
+                    rotate: (Math.random() - 0.5) * 60, // More rotation during overshoot
+                    scale: 1.1 + (Math.random() - 0.5) * 0.1, // Overshoot scale slightly
+                };
+            });
+            setCardPositions(gatherOvershootPositions);
+
+            // Phase 3: Final Gather (Snap to place)
+            gatherOvershootTimeoutId = setTimeout(() => {
+                const finalGatherPositions: Record<string, CardPosition> = {};
+                shuffledCards.forEach((card) => {
+                    finalGatherPositions[card.name] = {
+                        x: (Math.random() - 0.5) * 10, // Very tight final cluster
+                        y: (Math.random() - 0.5) * 10,
+                        rotate: (Math.random() - 0.5) * 10, // Minimal final rotation
+                        scale: 1,
+                    };
+                });
+                setCardPositions(finalGatherPositions);
+
+                // Phase 4: End Shuffling (trigger fan-out)
+                finalGatherTimeoutId = setTimeout(() => {
+                    setIsShuffling(false);
+                }, 300); // Short delay before fanning out
+            }, 350); // Duration for overshoot animation
+        }, 450); // Duration for scatter animation
     } else {
       // Fan-out positioning
       const fanPositions: Record<string, CardPosition> = {};
@@ -236,7 +250,7 @@ export default function Home() {
       const numCards = cardsToFan.length;
 
       const isSmallScreen = windowSize.width < 768;
-      const fanArc = isSmallScreen ? 140 : 120;
+      const fanArc = isSmallScreen ? 140 : 120; 
       const radiusMultiplier = isSmallScreen ? 0.28 : 0.32;
       const fanRadius = Math.min(windowSize.width * radiusMultiplier, windowSize.height * 0.35);
       const yOffset = fanRadius * 0.7 - (windowSize.height * 0.1);
@@ -253,9 +267,11 @@ export default function Home() {
       });
       setCardPositions(fanPositions);
     }
+
     return () => {
         clearTimeout(scatterTimeoutId);
-        clearTimeout(gatherTimeoutId);
+        clearTimeout(gatherOvershootTimeoutId);
+        clearTimeout(finalGatherTimeoutId);
     };
   }, [isShuffling, shuffledCards, windowSize]);
 
@@ -271,7 +287,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    handleShuffle();
+    handleShuffle(); // Initial shuffle when component mounts
   }, [handleShuffle]);
 
 
@@ -373,7 +389,6 @@ export default function Home() {
       <div className="relative w-full max-w-4xl h-96 mb-8 flex items-center justify-center">
         {shuffledCards.slice(0, 78).map((card, index) => {
           const currentPosition = cardPositions[card.name] || { x:0, y:0, rotate:0, scale:1};
-          const transitionDuration = isShuffling ? '0.5s' : '0.8s';
           return (
             <div
               key={card.name}
@@ -390,7 +405,7 @@ export default function Home() {
               style={{
                 transform: `translate(${currentPosition.x}px, ${currentPosition.y}px) rotate(${currentPosition.rotate}deg) scale(${currentPosition.scale})`,
                 zIndex: isCardSelected(card.name) ? 999 : index,
-                transition: `transform ${transitionDuration} cubic-bezier(0.25, 0.1, 0.25, 1), opacity 0.5s ease-out, z-index 0.3s, box-shadow 0.3s, ring 0.3s`,
+                transition: `transform ${isShuffling ? '0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)' : '0.8s cubic-bezier(0.25, 0.1, 0.25, 1)'}, opacity 0.5s ease-out, z-index 0.3s, box-shadow 0.3s, ring 0.3s`,
               }}
             >
               <Image
