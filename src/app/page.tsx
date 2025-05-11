@@ -209,7 +209,7 @@ export default function Home() {
     setShuffledCards(shuffleWithReversed(tarotCardsData));
     setSelectedCards([]);
     setCardInterpretations(null); // Clear interpretations on shuffle
-    setQuestion(""); // Clear question on shuffle
+    // setQuestion(""); // Clear question on shuffle
 
     // Reset shuffling state after animation duration
     setTimeout(() => setIsShuffling(false), 1000); // Adjust duration as needed
