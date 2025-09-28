@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -144,6 +144,199 @@ interface CardPosition {
   scale: number;
 }
 
+type WindowDimensions = {
+  width: number;
+  height: number;
+};
+
+type ShuffleVariantId = "burst" | "spiral" | "cascade";
+
+interface ShuffleStep {
+  delay: number;
+  positions: Record<string, CardPosition>;
+}
+
+interface ShuffleSequence {
+  steps: ShuffleStep[];
+  totalDuration: number;
+}
+
+interface ShuffleVariant {
+  id: ShuffleVariantId;
+  createSequence: (
+    cards: TarotCardDisplayData[],
+    viewport: WindowDimensions
+  ) => ShuffleSequence;
+}
+
+const buildPositions = (
+  cards: TarotCardDisplayData[],
+  factory: (card: TarotCardDisplayData, index: number) => CardPosition
+): Record<string, CardPosition> => {
+  const positions: Record<string, CardPosition> = {};
+  cards.forEach((card, index) => {
+    positions[card.name] = factory(card, index);
+  });
+  return positions;
+};
+
+const SHUFFLE_VARIANTS: ShuffleVariant[] = [
+  {
+    id: "burst",
+    createSequence: (cards, viewport) => {
+      const safeWidth = Math.max(viewport.width, 1);
+      const safeHeight = Math.max(viewport.height, 1);
+      const aspectRatio = safeHeight / safeWidth;
+
+      const scatter = buildPositions(cards, () => {
+        const angle = Math.random() * Math.PI * 2;
+        const radius = safeWidth * (0.3 + Math.random() * 0.4);
+        return {
+          x: Math.cos(angle) * radius,
+          y: Math.sin(angle) * radius * aspectRatio * 0.8,
+          rotate: (Math.random() - 0.5) * 1080,
+          scale: 0.45 + Math.random() * 0.55,
+        };
+      });
+
+      const overshoot = buildPositions(cards, () => ({
+        x: (Math.random() - 0.5) * 120,
+        y: (Math.random() - 0.5) * 120,
+        rotate: (Math.random() - 0.5) * 240,
+        scale: 1.1 + Math.random() * 0.25,
+      }));
+
+      const gather = buildPositions(cards, () => ({
+        x: (Math.random() - 0.5) * 20,
+        y: (Math.random() - 0.5) * 20,
+        rotate: (Math.random() - 0.5) * 35,
+        scale: 1,
+      }));
+
+      return {
+        steps: [
+          { delay: 0, positions: scatter },
+          { delay: 800, positions: overshoot },
+          { delay: 1250, positions: gather },
+        ],
+        totalDuration: 1650,
+      };
+    },
+  },
+  {
+    id: "spiral",
+    createSequence: (cards, viewport) => {
+      const safeWidth = Math.max(viewport.width, 1);
+      const safeHeight = Math.max(viewport.height, 1);
+      const maxRadius = Math.min(safeWidth, safeHeight) * 0.45;
+      const angleStep = (Math.PI * 5) / Math.max(cards.length, 1);
+
+      const spiralScatter = buildPositions(cards, (_card, index) => {
+        const angle = index * angleStep + Math.random() * 0.8;
+        const radius =
+          maxRadius * (index / Math.max(cards.length - 1, 1)) +
+          Math.random() * 30;
+        return {
+          x: Math.cos(angle) * radius,
+          y: Math.sin(angle) * radius * 0.8,
+          rotate: (angle * 180) / Math.PI + (Math.random() - 0.5) * 120,
+          scale: 0.6 + (index % 5) * 0.08,
+        };
+      });
+
+      const swirl = buildPositions(cards, (_card, index) => {
+        const angle = index * angleStep + Math.PI / 2;
+        const radius = maxRadius * 0.5 + Math.random() * 40;
+        return {
+          x: Math.cos(angle) * radius,
+          y: Math.sin(angle) * radius * 0.6,
+          rotate: (Math.random() - 0.5) * 180,
+          scale: 0.9 + (Math.random() - 0.5) * 0.2,
+        };
+      });
+
+      const gather = buildPositions(cards, () => ({
+        x: (Math.random() - 0.5) * 22,
+        y: (Math.random() - 0.5) * 22,
+        rotate: (Math.random() - 0.5) * 25,
+        scale: 1,
+      }));
+
+      return {
+        steps: [
+          { delay: 0, positions: spiralScatter },
+          { delay: 650, positions: swirl },
+          { delay: 1150, positions: gather },
+        ],
+        totalDuration: 1600,
+      };
+    },
+  },
+  {
+    id: "cascade",
+    createSequence: (cards, viewport) => {
+      const safeWidth = Math.max(viewport.width, 1);
+      const safeHeight = Math.max(viewport.height, 1);
+      const columns = Math.max(Math.ceil(Math.sqrt(cards.length)), 1);
+      const rows = Math.max(Math.ceil(cards.length / columns), 1);
+      const horizontalSpan = safeWidth * 0.65;
+      const verticalSpan = safeHeight * 0.55;
+      const columnDenominator = Math.max(columns - 1, 1);
+      const rowDenominator = Math.max(rows - 1, 1);
+      const cellWidth = horizontalSpan / columnDenominator;
+      const cellHeight = verticalSpan / rowDenominator;
+      const startX = -horizontalSpan / 2;
+      const startY = -verticalSpan / 2;
+
+      const gridScatter = buildPositions(cards, (_card, index) => {
+        const col = index % columns;
+        const row = Math.floor(index / columns);
+        return {
+          x:
+            startX +
+            col * cellWidth +
+            (Math.random() - 0.5) * cellWidth * 0.4,
+          y:
+            startY +
+            row * cellHeight +
+            (Math.random() - 0.5) * cellHeight * 0.4,
+          rotate: (Math.random() - 0.5) * 160,
+          scale: 0.7 + Math.random() * 0.3,
+        };
+      });
+
+      const wave = buildPositions(cards, (_card, index) => {
+        const progress = index / Math.max(cards.length - 1, 1);
+        const angle = progress * Math.PI * 4;
+        const amplitude = safeHeight * 0.15 + Math.random() * 20;
+        const x = startX + progress * horizontalSpan;
+        return {
+          x,
+          y: Math.sin(angle) * amplitude + (Math.random() - 0.5) * 40,
+          rotate: Math.cos(angle) * 45,
+          scale: 0.85 + Math.sin(angle + Math.PI / 4) * 0.1,
+        };
+      });
+
+      const gather = buildPositions(cards, () => ({
+        x: (Math.random() - 0.5) * 18,
+        y: (Math.random() - 0.5) * 18,
+        rotate: (Math.random() - 0.5) * 28,
+        scale: 1,
+      }));
+
+      return {
+        steps: [
+          { delay: 0, positions: gridScatter },
+          { delay: 600, positions: wave },
+          { delay: 1100, positions: gather },
+        ],
+        totalDuration: 1550,
+      };
+    },
+  },
+];
+
 const LoadingIndicator = () => (
   <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[3000]">
     <div className="relative animate-spin-slow">
@@ -172,11 +365,22 @@ export default function Home() {
   const [cardPositions, setCardPositions] = useState<
     Record<string, CardPosition>
   >({});
+  const [shuffleVariantId, setShuffleVariantId] = useState<ShuffleVariantId>(
+    SHUFFLE_VARIANTS[0].id
+  );
   const [isShuffling, setIsShuffling] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [question, setQuestion] = useState("");
   const [isOutputModalOpen, setIsOutputModalOpen] = useState(false);
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
+
+  const activeShuffleVariant = useMemo(() => {
+    const fallback = SHUFFLE_VARIANTS[0];
+    return (
+      SHUFFLE_VARIANTS.find((variant) => variant.id === shuffleVariantId) ||
+      fallback
+    );
+  }, [shuffleVariantId]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -194,96 +398,75 @@ export default function Home() {
   useEffect(() => {
     if (windowSize.width === 0 || windowSize.height === 0) return;
 
-    let scatterTimeoutId: NodeJS.Timeout;
-    let gatherOvershootTimeoutId: NodeJS.Timeout;
-    let finalGatherTimeoutId: NodeJS.Timeout;
-
     if (isShuffling) {
-      // Phase 1: Scatter with more energy
-      const scatterPositions: Record<string, CardPosition> = {};
-      shuffledCards.forEach((card) => {
-        const angle = Math.random() * Math.PI * 2; // Random angle
-        const radius = windowSize.width * (0.4 + Math.random() * 0.4); // Scatter further, up to 80% of width
-        scatterPositions[card.name] = {
-          x: Math.cos(angle) * radius,
-          y:
-            Math.sin(angle) *
-            radius *
-            (windowSize.height / windowSize.width) *
-            0.8, // Adjust for aspect ratio, scatter less vertically
-          rotate: (Math.random() - 0.5) * 1080, // Wild rotation
-          scale: 0.4 + Math.random() * 0.6, // Varying sizes
-        };
-      });
-      // setCardPositions(gatherOvershootPositions);
-
-      // Phase 2: Brief pause then quick gather towards center (overshoot)
-      scatterTimeoutId = setTimeout(() => {
-        const gatherOvershootPositions: Record<string, CardPosition> = {};
-        shuffledCards.forEach((card) => {
-          gatherOvershootPositions[card.name] = {
-            x: (Math.random() - 0.5) * 80,
-            y: (Math.random() - 0.5) * 80,
-            rotate: (Math.random() - 0.5) * 180,
-            scale: 1.2 + Math.random() * 0.3, // Overshoot scale
-          };
-        });
-        setCardPositions(gatherOvershootPositions);
-
-        // Phase 3: Final settle into a tight pile
-        gatherOvershootTimeoutId = setTimeout(() => {
-          const finalGatherPositions: Record<string, CardPosition> = {};
-          shuffledCards.forEach((card) => {
-            finalGatherPositions[card.name] = {
-              x: (Math.random() - 0.5) * 15,
-              y: (Math.random() - 0.5) * 15,
-              rotate: (Math.random() - 0.5) * 20,
-              scale: 1,
-            };
-          });
-          setCardPositions(finalGatherPositions);
-
-          finalGatherTimeoutId = setTimeout(() => {
-            setIsShuffling(false); // End shuffling, triggers fan-out
-          }, 350); // Settle duration
-        }, 450); // Overshoot duration
-      }, 800); // Scatter duration
-    } else {
-      // Fan-out positioning
-      const fanPositions: Record<string, CardPosition> = {};
-      const cardsToFan = shuffledCards.slice(0, 78);
-      const numCards = cardsToFan.length;
-
-      const isSmallScreen = windowSize.width < 768;
-      const fanArc = isSmallScreen ? 140 : 120;
-      const radiusMultiplier = isSmallScreen ? 0.28 : 0.32;
-      const fanRadius = Math.min(
-        windowSize.width * radiusMultiplier,
-        windowSize.height * 0.35
+      const { steps, totalDuration } = activeShuffleVariant.createSequence(
+        shuffledCards,
+        windowSize
       );
-      const yOffset = fanRadius * 0.7 - windowSize.height * 0.1;
 
-      cardsToFan.forEach((card, index) => {
-        const angle =
-          numCards > 1
-            ? (index - (numCards - 1) / 2) * (fanArc / (numCards - 1))
-            : 0;
-        fanPositions[card.name] = {
-          x: fanRadius * Math.sin((angle * Math.PI) / 180),
-          y: -fanRadius * Math.cos((angle * Math.PI) / 180) + yOffset,
-          rotate: angle,
-          scale: 1,
-        };
+      if (!steps.length) {
+        setIsShuffling(false);
+        return;
+      }
+
+      const sortedSteps = steps.slice().sort((a, b) => a.delay - b.delay);
+      const [firstStep, ...remainingSteps] = sortedSteps;
+      const timeouts: NodeJS.Timeout[] = [];
+
+      if (firstStep.delay <= 0) {
+        setCardPositions(firstStep.positions);
+      } else {
+        const initialTimeout = setTimeout(() => {
+          setCardPositions(firstStep.positions);
+        }, firstStep.delay);
+        timeouts.push(initialTimeout);
+      }
+
+      remainingSteps.forEach((step) => {
+        const timeoutId = setTimeout(() => {
+          setCardPositions(step.positions);
+        }, step.delay);
+        timeouts.push(timeoutId);
       });
-      setCardPositions(fanPositions);
+
+      const completionTimeout = setTimeout(() => {
+        setIsShuffling(false);
+      }, totalDuration);
+      timeouts.push(completionTimeout);
+
+      return () => {
+        timeouts.forEach((timeoutId) => clearTimeout(timeoutId));
+      };
     }
 
-    return () => {
-      clearTimeout(scatterTimeoutId);
-      clearTimeout(gatherOvershootTimeoutId);
-      clearTimeout(finalGatherTimeoutId);
-    };
-  }, [isShuffling, shuffledCards, windowSize]);
+    const fanPositions: Record<string, CardPosition> = {};
+    const cardsToFan = shuffledCards.slice(0, 78);
+    const numCards = cardsToFan.length;
+
+    const isSmallScreen = windowSize.width < 768;
+    const fanArc = isSmallScreen ? 140 : 120;
+    const radiusMultiplier = isSmallScreen ? 0.28 : 0.32;
+    const fanRadius = Math.min(
+      windowSize.width * radiusMultiplier,
+      windowSize.height * 0.35
+    );
+    const yOffset = fanRadius * 0.7 - windowSize.height * 0.1;
+
+    cardsToFan.forEach((card, index) => {
+      const angle =
+        numCards > 1
+          ? (index - (numCards - 1) / 2) * (fanArc / (numCards - 1))
+          : 0;
+      fanPositions[card.name] = {
+        x: fanRadius * Math.sin((angle * Math.PI) / 180),
+        y: -fanRadius * Math.cos((angle * Math.PI) / 180) + yOffset,
+        rotate: angle,
+        scale: 1,
+      };
+    });
+
+    setCardPositions(fanPositions);
+  }, [activeShuffleVariant, isShuffling, shuffledCards, windowSize]);
 
   const handleShuffle = useCallback(() => {
     setIsLoading(false); // Reset loading state
@@ -293,6 +476,14 @@ export default function Home() {
 
     const newShuffledDeck = shuffleWithReversed(tarotCardsData);
     setShuffledCards(newShuffledDeck);
+    setShuffleVariantId((previous) => {
+      const candidates = SHUFFLE_VARIANTS.filter(
+        (variant) => variant.id !== previous
+      );
+      const pool = candidates.length > 0 ? candidates : SHUFFLE_VARIANTS;
+      const nextVariant = pool[Math.floor(Math.random() * pool.length)];
+      return nextVariant.id;
+    });
     setIsShuffling(true); // Start shuffling animation sequence
   }, []);
 
