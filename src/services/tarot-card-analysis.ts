@@ -42,7 +42,7 @@ export async function analyzeTarotCards(
   try {
     // Make sure the URL is correct and accessible
     const response = await fetch(
-      "https://n8n.sosigi.synology.me/webhook-test/f53fb29f-c619-4fc1-bd01-6c863e98eb12",
+      "https://n8n.sosigi.synology.me/webhook/f53fb29f-c619-4fc1-bd01-6c863e98eb12",
       {
         method: "POST",
         headers: {
