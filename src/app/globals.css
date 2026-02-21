@@ -4,28 +4,37 @@
 
 @layer base {
   :root {
+    color-scheme: dark;
     /* Fast/Smooth dark slate for mystical theme */
-    --background: 240 10% 3.9%; /* Deep Slate Black */
-    --foreground: 0 0% 98%; /* Pure White */
-    --card: 240 10% 6.9%; /* Dark Slate Card */
+    --background: 240 10% 3.9%;
+    /* Deep Slate Black */
+    --foreground: 0 0% 98%;
+    /* Pure White */
+    --card: 240 10% 6.9%;
+    /* Dark Slate Card */
     --card-foreground: 0 0% 98%;
     --popover: 240 10% 6.9%;
     --popover-foreground: 0 0% 98%;
-    --primary: 270 60% 50%; /* Mystical Violet */
+    --primary: 270 60% 50%;
+    /* Mystical Violet */
     --primary-foreground: 210 40% 98%;
-    --secondary: 190 60% 55%; /* Glowing Cyan */
+    --secondary: 190 60% 55%;
+    /* Glowing Cyan */
     --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 240 10% 15%; /* Lighter Slate Muted */
+    --muted: 240 10% 15%;
+    /* Lighter Slate Muted */
     --muted-foreground: 240 5% 65%;
-    --accent: 270 40% 25%; /* Dark Violet Accent */
+    --accent: 270 40% 25%;
+    /* Dark Violet Accent */
     --accent-foreground: 0 0% 98%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
     --border: 240 10% 15%;
     --input: 240 10% 15%;
-    --ring: 270 60% 50%; /* Violet Focus Ring */
+    --ring: 270 60% 50%;
+    /* Violet Focus Ring */
     --radius: 0.75rem;
-    
+
     --chart-1: 270 60% 50%;
     --chart-2: 190 60% 55%;
     --chart-3: 48 91% 55%;
@@ -61,8 +70,8 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
 }
-

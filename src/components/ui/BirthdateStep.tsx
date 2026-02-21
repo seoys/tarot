@@ -27,7 +27,7 @@ export function BirthdateStep({ onComplete }: BirthdateStepProps) {
 
     return (
         <div className="flex flex-col items-center justify-center min-h-[70vh] px-6 animate-in fade-in duration-700">
-            <div className="w-full max-w-md bg-card/40 backdrop-blur-xl border border-primary/20 rounded-3xl p-8 shadow-[0_0_40px_-10px_rgba(139,92,246,0.15)] relative overflow-hidden">
+            <div className="w-full max-w-md bg-black/40 backdrop-blur-xl border border-primary/20 rounded-3xl p-8 shadow-[0_0_40px_-10px_rgba(139,92,246,0.15)] relative overflow-hidden">
                 {/* Decorative elements */}
                 <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 rounded-full blur-[50px] -mr-16 -mt-16 pointer-events-none" />
                 <div className="absolute bottom-0 left-0 w-32 h-32 bg-secondary/20 rounded-full blur-[50px] -ml-16 -mb-16 pointer-events-none" />
@@ -52,7 +52,7 @@ export function BirthdateStep({ onComplete }: BirthdateStepProps) {
                             placeholder="당신을 부를 이름을 알려주세요"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            className="w-full bg-background/50 border border-primary/30 rounded-xl px-4 py-3 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-transparent transition-all"
+                            className="w-full bg-black/50 border border-primary/30 rounded-xl px-4 py-3 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-transparent transition-all appearance-none"
                         />
                     </div>
 
@@ -67,7 +67,7 @@ export function BirthdateStep({ onComplete }: BirthdateStepProps) {
                             max="9999-12-31"
                             value={date}
                             onChange={(e) => setDate(e.target.value)}
-                            className="w-full bg-background/50 border border-primary/30 rounded-xl px-4 py-3 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-transparent transition-all"
+                            className="w-full bg-black/50 border border-primary/30 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-transparent transition-all appearance-none [color-scheme:dark]"
                         />
                     </div>
 
@@ -97,7 +97,7 @@ export function BirthdateStep({ onComplete }: BirthdateStepProps) {
                             value={time}
                             disabled={isTimeUnknown}
                             onChange={(e) => setTime(e.target.value)}
-                            className="w-full bg-background/50 border border-primary/30 rounded-xl px-4 py-3 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full bg-black/50 border border-primary/30 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-transparent transition-all appearance-none [color-scheme:dark] disabled:opacity-50 disabled:cursor-not-allowed"
                         />
                     </div>
 
