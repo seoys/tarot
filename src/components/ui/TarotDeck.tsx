@@ -38,36 +38,28 @@ export const TarotDeck = React.memo(
                             key={card.name}
                             onClick={() => toggleCardSelection(card.name)}
                             className={cn(
-                                "absolute cursor-pointer hover:z-20 hover:scale-110",
+                                "absolute cursor-pointer transition-all duration-700",
                                 selected
-                                    ? "ring-4 ring-primary ring-offset-2 ring-offset-background rounded-lg z-10 scale-105"
-                                    : "shadow-lg",
-                                isLoading || isShuffling ? "pointer-events-none opacity-70" : "opacity-100"
+                                    ? "opacity-0 pointer-events-none scale-0"
+                                    : "opacity-100 hover:z-20 hover:scale-110 shadow-lg",
+                                isLoading || isShuffling ? "pointer-events-none opacity-50" : ""
                             )}
                             style={{
-                                transform: `perspective(1000px) translate(${currentPosition.x}px, ${currentPosition.y}px) rotate(${currentPosition.rotate}deg) rotateX(${currentPosition.rotateX || 0}deg) rotateY(${currentPosition.rotateY || 0}deg) scale(${currentPosition.scale})`,
-                                zIndex: selected ? 999 : index,
-                                transition: `transform ${isShuffling
-                                    ? "0.4s cubic-bezier(0.34, 1.56, 0.64, 1)" // Bouncy spring effect for mystical shuffle
-                                    : "0.8s cubic-bezier(0.25, 0.1, 0.25, 1)"
-                                    }, opacity 0.5s ease-out, z-index 0.3s, box-shadow 0.3s, ring 0.3s`,
+                                transform: `perspective(1000px) translate(${currentPosition.x}px, ${currentPosition.y}px) rotate(${currentPosition.rotate}deg) rotateX(${currentPosition.rotateX || 0}deg) rotateY(${currentPosition.rotateY || 0}deg) scale(${selected ? 0 : currentPosition.scale})`,
+                                zIndex: selected ? -1 : index,
                             }}
                         >
                             <Image
-                                src={selected ? card.imageUrl : CARD_BACK_IMAGE}
+                                src={CARD_BACK_IMAGE}
                                 alt={card.name}
                                 className={cn(
-                                    "rounded-md object-cover w-16 h-auto border border-black/30",
-                                    card.isReversed && selected ? "rotate-180" : ""
+                                    "rounded-md object-cover w-16 h-auto border border-black/30"
                                 )}
                                 width={64}
                                 height={96}
                                 priority={index < 10}
                                 data-ai-hint="tarot card"
                             />
-                            {selected && (
-                                <div className="absolute inset-0 bg-primary/20 rounded-md pointer-events-none"></div>
-                            )}
                         </div>
                     );
                 })}

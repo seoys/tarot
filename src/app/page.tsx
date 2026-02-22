@@ -25,6 +25,7 @@ import { QuestionInput } from "@/components/ui/QuestionInput";
 import { CardSelectionDialog } from "@/components/ui/CardSelectionDialog";
 import { CardInterpretations } from "@/components/ui/CardInterpretations";
 import { TarotDeck } from "@/components/ui/TarotDeck";
+import { SelectedCardsSlots } from "@/components/ui/SelectedCardsSlots";
 import { PreviewCardDialog } from "@/components/ui/PreviewCardDialog";
 import { useToast } from "@/hooks/use-toast";
 import { FunnelStep, UserInfo } from "@/types/user-journey";
@@ -122,11 +123,10 @@ export default function Home() {
     if (isLoading || isShuffling) return;
 
     if (selectedCards.includes(cardName)) {
-      // Already selected, just show preview
-      const card = shuffledCards.find((c) => c.name === cardName);
-      if (card) {
-        setPreviewCard(card);
-      }
+      // If already selected, do nothing or just preview? 
+      // User wants selected cards to be hidden from deck, so unselect should happen via slots.
+      // But for robustness, let's keep it togglable if they somehow click it.
+      handleUnselectCard(cardName);
     } else if (selectedCards.length < 5) {
       // Select it and show preview
       const card = shuffledCards.find((c) => c.name === cardName);
@@ -135,6 +135,10 @@ export default function Home() {
         setPreviewCard(card);
       }
     }
+  };
+
+  const handleUnselectCard = (cardName: string) => {
+    setSelectedCards(selectedCards.filter((name) => name !== cardName));
   };
 
   const handleConfirmSelection = async () => {
@@ -309,6 +313,13 @@ export default function Home() {
             {/* Tarot Deck Area */}
             {!isAnalysisComplete && (
               <div className="w-full relative mb-12">
+                {!isAnalysisComplete && selectedCards.length > 0 && (
+                  <SelectedCardsSlots
+                    selectedCards={selectedCards}
+                    shuffledCards={shuffledCards}
+                    onUnselectCard={handleUnselectCard}
+                  />
+                )}
                 <TarotDeck
                   shuffledCards={shuffledCards}
                   cardPositions={cardPositions}
