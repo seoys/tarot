@@ -39,7 +39,7 @@ export function CardSelectionDialog({
                     <div className="flex items-center gap-3 bg-background/90 backdrop-blur-md border border-primary/30 rounded-full px-6 py-3 shadow-[0_0_20px_-5px_rgba(139,92,246,0.5)] pointer-events-auto">
                         <div className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse" />
                         <span className="text-sm md:text-base font-medium text-foreground tracking-wide">
-                            선택한 카드: <span className="text-primary font-bold text-lg">{selectedCards.length}</span>장 (최대 5장)
+                            <span className="text-primary font-bold text-lg">{selectedCards.length}</span>장의 패가 선택되었습니다
                         </span>
                     </div>
                 </div>
@@ -50,7 +50,7 @@ export function CardSelectionDialog({
                 <div className="fixed bottom-8 left-0 right-0 flex justify-center px-4 animate-in slide-in-from-bottom-4 fade-in duration-500 zoom-in-95 pointer-events-none flex-col items-center">
                     {selectedCards.length === 3 && (
                         <p className="text-xs text-muted-foreground/80 mb-3 animate-pulse pointer-events-auto">
-                            더 깊은 조언을 원한다면 5장까지 선택할 수 있어요
+                            더 깊이 들어가시겠습니까? 2장이 더 남아 있습니다
                         </p>
                     )}
                     <div className="w-full max-w-md pointer-events-auto">
@@ -64,17 +64,17 @@ export function CardSelectionDialog({
                                     disabled={isLoading || isShuffling}
                                     onClick={() => setIsConfirmationOpen(true)}
                                 >
-                                    {selectedCards.length}장 카드 선택 완료 (결과 보기)
+                                    이 {selectedCards.length}장의 패로 운명을 읽겠습니다
                                 </Button>
                             </AlertDialogTrigger>
                             <AlertDialogContent className="bg-card/95 backdrop-blur-xl border-primary/20 z-[2000] shadow-[0_0_40px_-10px_rgba(139,92,246,0.3)] max-w-sm rounded-2xl mx-auto">
                                 <AlertDialogHeader>
                                     <AlertDialogTitle className="text-2xl font-serif text-center text-primary-foreground">
-                                        선택 완료
+                                        패가 정해졌습니다
                                     </AlertDialogTitle>
                                     <AlertDialogDescription className="text-center text-muted-foreground">
-                                        {selectedCards.length}장의 카드를 선택하셨습니다.
-                                        이제 우주의 메시지를 확인해볼까요?
+                                        {selectedCards.length}장의 패를 선택하셨습니다.<br/>
+                                        이제 당신의 운명을 들여다보겠습니다.
                                     </AlertDialogDescription>
                                 </AlertDialogHeader>
                                 <div className="flex justify-center gap-3 my-6 flex-wrap">
@@ -103,7 +103,7 @@ export function CardSelectionDialog({
                                         onClick={onConfirmSelection}
                                         className="w-full bg-primary hover:bg-primary/80 text-primary-foreground shadow-[0_0_15px_-3px_var(--primary)] text-lg py-5 rounded-xl"
                                     >
-                                        해석 보기
+                                        운명을 마주하다
                                     </AlertDialogAction>
                                 </AlertDialogFooter>
                             </AlertDialogContent>
