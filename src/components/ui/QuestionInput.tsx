@@ -20,11 +20,11 @@ export function QuestionInput({
                 htmlFor="question"
                 className="text-foreground mb-2 block font-serif italic text-lg"
             >
-                무엇이 알고 싶으신가요?
+                무엇을 알고 싶습니까?
             </Label>
             <Input
                 id="question"
-                placeholder="예: 오늘 저의 연애운은 어떤가요?"
+                placeholder="직접 말하지 않아도 됩니다. 하지만 물음이 있다면..."
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
                 autoFocus
