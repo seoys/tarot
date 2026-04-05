@@ -26,20 +26,20 @@ export function BirthdateStep({ onComplete }: BirthdateStepProps) {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-[70vh] px-6 animate-in fade-in duration-700">
-            <div className="w-full max-w-md bg-white/5 backdrop-blur-xl border border-primary/20 rounded-3xl p-8 shadow-[0_0_40px_-10px_rgba(139,92,246,0.15)] relative overflow-hidden">
+        <div className="flex flex-col items-center justify-center min-h-[70vh] px-4 animate-in fade-in duration-700">
+            <div className="w-full max-w-md bg-white/5 backdrop-blur-xl border border-primary/20 rounded-3xl p-6 shadow-[0_0_40px_-10px_rgba(139,92,246,0.15)] relative overflow-hidden">
                 {/* Decorative elements */}
                 <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 rounded-full blur-[50px] -mr-16 -mt-16 pointer-events-none" />
                 <div className="absolute bottom-0 left-0 w-32 h-32 bg-secondary/20 rounded-full blur-[50px] -ml-16 -mb-16 pointer-events-none" />
 
-                <div className="relative z-10 text-center mb-8">
-                    <h2 className="text-3xl font-serif text-primary-foreground mb-4">말하지 않아도 됩니다.<br/>이미 보고 있으니까요.</h2>
+                <div className="relative z-10 text-center mb-6">
+                    <h2 className="text-xl font-serif text-primary-foreground mb-4">말하지 않아도 됩니다. 이미 보고 있으니까요.</h2>
                     <p className="text-sm leading-relaxed text-left italic text-foreground/75 border-l-2 border-primary/50 pl-4 bg-primary/5 py-3 pr-3 rounded-r-lg">
-                        "그렇지만... 이름과 태어난 날만큼은 직접 알려주셔야 합니다.<br/>그것은 당신만이 줄 수 있는 것이니."
+                        "그렇지만... 이름과 태어난 날만큼은 직접 알려주셔야 합니다. 그것은 당신만이 줄 수 있는 것이니."
                     </p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="relative z-10 flex flex-col gap-6">
+                <form onSubmit={handleSubmit} className="relative z-10 flex flex-col gap-5">
                     <div className="flex flex-col gap-2">
                         <label htmlFor="name" className="text-sm font-medium text-foreground/80 pl-1">
                             당신의 이름 <span className="text-primary">*</span>
@@ -73,7 +73,7 @@ export function BirthdateStep({ onComplete }: BirthdateStepProps) {
                     <div className="flex flex-col gap-2">
                         <div className="flex justify-between items-center pl-1">
                             <label htmlFor="birthtime" className="text-sm font-medium text-foreground/80">
-                                태어난 시간 <span className="text-xs text-muted-foreground font-normal">— 기억하지 못해도 읽을 수 있습니다</span>
+                                태어난 시간
                             </label>
                             <label className="flex items-center gap-2 cursor-pointer group">
                                 <div className="relative flex items-center justify-center w-5 h-5">
@@ -87,7 +87,7 @@ export function BirthdateStep({ onComplete }: BirthdateStepProps) {
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                                     </svg>
                                 </div>
-                                <span className="text-sm text-muted-foreground group-hover:text-foreground/80 transition-colors">기억하지 못합니다</span>
+                                <span className="text-xs text-muted-foreground group-hover:text-foreground/80 transition-colors">기억하지 못합니다</span>
                             </label>
                         </div>
                         <input
