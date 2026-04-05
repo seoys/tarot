@@ -73,7 +73,7 @@ export function SelectedCardsSlots({
             </div>
             {selectedCards.length > 0 && selectedCards.length < 3 && (
                 <p className="text-center text-xs text-muted-foreground mt-4 animate-pulse">
-                    최소 3장의 카드를 선택해야 합니다
+                    최소 3장의 패가 필요합니다
                 </p>
             )}
         </div>
