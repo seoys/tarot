@@ -55,7 +55,7 @@ export function MbtiQuizStep({ onComplete }: MbtiQuizStepProps) {
             <div className="w-full max-w-md mb-8">
                 <div className="flex justify-between text-xs text-primary/70 mb-2 px-1 font-medium">
                     <span>Q{currentIdx + 1}</span>
-                    <span>우주의 진동 주파수 분석중...</span>
+                    <span>당신의 본질을 읽는 중...</span>
                 </div>
                 <div className="h-1.5 w-full bg-primary/20 rounded-full overflow-hidden">
                     <div
@@ -73,6 +73,7 @@ export function MbtiQuizStep({ onComplete }: MbtiQuizStepProps) {
                 <div className="bg-card/40 backdrop-blur-xl border border-primary/20 rounded-3xl p-8 md:p-10 shadow-[0_0_40px_-10px_rgba(139,92,246,0.15)] relative overflow-hidden flex flex-col items-center text-center">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 rounded-full blur-[50px] -mr-16 -mt-16 pointer-events-none" />
 
+                    <p className="text-xs text-primary/60 uppercase tracking-widest mb-3">점술가가 묻습니다</p>
                     <h3 className="text-xl md:text-2xl font-serif text-primary-foreground mb-8 leading-relaxed">
                         {currentQ.text}
                     </h3>
