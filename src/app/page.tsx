@@ -276,7 +276,7 @@ export default function Home() {
               <QuestionInput
                 question={question}
                 setQuestion={setQuestion}
-                isLoading={isAnalyzing || selectedCards.length > 0}
+                isLoading={isAnalyzing}
                 isShuffling={isShuffling}
               />
             )}
