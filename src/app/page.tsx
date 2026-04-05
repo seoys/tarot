@@ -145,8 +145,8 @@ export default function Home() {
     if (question === "") {
       toast({
         variant: "destructive",
-        title: "질문을 입력해주세요",
-        description: "타로카드에게 물어볼 질문이 필요합니다.",
+        title: "물음이 없으면 패를 읽을 수 없습니다",
+        description: "점술가에게 전할 물음을 먼저 적어주십시오.",
       });
       setIsConfirmationOpen(false);
       return;
@@ -154,8 +154,8 @@ export default function Home() {
     if (selectedCards.length === 0) {
       toast({
         variant: "destructive",
-        title: "카드를 선택해주세요",
-        description: "해석을 위해 최소 1장의 카드를 선택해야 합니다.",
+        title: "패를 선택하십시오",
+        description: "최소 1장의 패를 집어야 운명을 읽을 수 있습니다.",
       });
       setIsConfirmationOpen(false);
       return;
@@ -185,8 +185,8 @@ export default function Home() {
       console.error("Failed to analyze tarot cards:", error);
       toast({
         variant: "destructive",
-        title: "오류가 발생했습니다",
-        description: "해석을 가져오는 중 문제가 생겼습니다. 다시 시도해주세요.",
+        title: "운명의 실이 끊겼습니다",
+        description: "패를 읽는 중 문제가 생겼습니다. 다시 시도해 주십시오.",
       });
       setCardInterpretations(null);
     } finally {
@@ -219,12 +219,12 @@ export default function Home() {
 
   // UX Helper Text Logic
   const getHelperText = () => {
-    if (isLoading) return "카드의 메시지를 해석하고 있습니다...";
-    if (isShuffling) return "카드를 섞고 있습니다...";
-    if (question.trim() === "") return "먼저 타로카드에게 물어볼 질문을 입력해주세요.";
-    if (selectedCards.length === 0) return "직관이 이끄는 대로 카드를 선택해주세요. (3장 또는 5장)";
-    if (selectedCards.length > 0) return "선택 완료 버튼을 눌러 카드의 의미를 확인해보세요.";
-    return "카드를 섞고 질문을 집중해 보세요.";
+    if (isLoading) return "운명의 패를 읽고 있습니다...";
+    if (isShuffling) return "패를 섞고 있습니다...";
+    if (question.trim() === "") return "먼저 점술가에게 물음을 전하십시오.";
+    if (selectedCards.length === 0) return "운명이 이끄는 패를 집으십시오. (3장 또는 5장)";
+    if (selectedCards.length > 0) return "패가 선택됐습니다. 운명을 들여다볼 준비가 됐습니까?";
+    return "패를 섞고 물음에 집중하십시오.";
   };
 
   const handleBirthdateComplete = (info: Partial<UserInfo>) => {
@@ -245,8 +245,8 @@ export default function Home() {
   return (
     <main className="min-h-screen relative flex flex-col items-center justify-center p-4 sm:p-8 md:p-24 overflow-hidden bg-background selection:bg-primary/30">
       {/* Mystic Background Glows */}
-      <div className="fixed top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/20 blur-[100px] rounded-full pointer-events-none" />
-      <div className="fixed bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-secondary/20 blur-[100px] rounded-full pointer-events-none" />
+      <div className="fixed top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/15 blur-[100px] rounded-full pointer-events-none" />
+      <div className="fixed bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-primary/10 blur-[100px] rounded-full pointer-events-none" />
 
       {/* Funnel Router */}
       <div className="w-full max-w-7xl relative z-10 flex flex-col items-center">
@@ -267,7 +267,7 @@ export default function Home() {
                 Tarotal
               </h1>
               <p className="text-lg md:text-xl text-muted-foreground font-light max-w-xl mx-auto leading-relaxed">
-                {userInfo.mbti}의 기운을 담아, 당신의 무의식이 이끄는 5장의 카드를 선택하세요.
+                {userInfo.mbti}의 내면을 꿰뚫는 5장의 패를 집으십시오. 이미 무엇을 원하는지 알고 있습니다.
               </p>
             </div>
 
@@ -291,7 +291,7 @@ export default function Home() {
                   size="lg"
                   className="bg-transparent border-primary text-primary hover:bg-primary hover:text-primary-foreground rounded-full px-8 py-6 text-lg tracking-wider transition-all duration-300 hover:shadow-[0_0_20px_rgba(139,92,246,0.4)] hover:scale-105 active:scale-95"
                 >
-                  {isShuffling ? "우주의 기운을 모으는 중..." : "카드 섞기"}
+                  {isShuffling ? "패를 섞는 중..." : "패를 섞다"}
                 </Button>
               </div>
             )}
