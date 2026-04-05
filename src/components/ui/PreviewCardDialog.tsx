@@ -31,7 +31,7 @@ export function PreviewCardDialog({
                         {card.name}
                     </DialogTitle>
                     <DialogDescription className="text-center text-muted-foreground italic">
-                        선택하신 카드의 기운을 느껴보세요
+                        이 패가 당신에게 오고 있었습니다
                     </DialogDescription>
                 </DialogHeader>
 
@@ -52,7 +52,7 @@ export function PreviewCardDialog({
                         onClick={() => onOpenChange(false)}
                         className="w-full bg-primary hover:bg-primary/80 text-primary-foreground shadow-[0_0_20px_-5px_var(--primary)]"
                     >
-                        닫기
+                        알겠습니다
                     </Button>
                 </DialogFooter>
             </DialogContent>
