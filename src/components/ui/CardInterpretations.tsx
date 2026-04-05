@@ -153,7 +153,7 @@ export function CardInterpretations({
                             <div className="flex-none p-6 pb-4 border-b border-white/5 flex flex-col gap-3 bg-card/40 z-10">
                                 <div className="flex items-center justify-between">
                                     <h3 className="text-2xl font-serif font-bold text-primary tracking-wide">
-                                        운명의 흐름 해석
+                                        당신의 패를 읽겠습니다
                                     </h3>
                                     <button
                                         className="p-2 -mr-2 text-muted-foreground hover:text-foreground hover:bg-white/5 rounded-full transition-colors flex items-center justify-center"
@@ -166,7 +166,7 @@ export function CardInterpretations({
                                 {userInfo && (
                                     <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-xs text-muted-foreground font-light tracking-wide">
                                         <span>
-                                            🔮 내담자: <span className="text-foreground/90 font-medium">{userInfo.name}</span>님
+                                            🕯 내담자: <span className="text-foreground/90 font-medium">{userInfo.name}</span>님
                                             ({userInfo.birthDate.replace(/-/g, '.')}{userInfo.birthTime ? ` ${userInfo.birthTime}` : ''} / {userInfo.mbti})
                                         </span>
                                         <span className="hidden sm:inline text-white/20">|</span>
@@ -204,7 +204,7 @@ export function CardInterpretations({
                                             onRestart();
                                         }}
                                     >
-                                        처음으로
+                                        다시 운명을 마주하다
                                     </Button>
                                 </div>
                             )}
