@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>점술가 테마 전체 디자인</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0a0406;
+    color: #f0e0e4;
+    font-family: -apple-system, 'Noto Sans KR', sans-serif;
+    padding: 32px 20px 60px;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  h1 { font-size: 22px; color: #e8a0b0; font-weight: 700; margin-bottom: 6px; }
+  .page-sub { font-size: 13px; color: rgba(210,150,165,0.6); margin-bottom: 36px; }
+  h2 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(160,40,60,0.8); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid rgba(160,40,60,0.2); }
+
+  .section { margin-bottom: 40px; }
+
+  /* ───── COLOR SWATCHES ───── */
+  .swatches { display: flex; gap: 10px; flex-wrap: wrap; }
+  .swatch { flex: 1; min-width: 80px; border-radius: 10px; overflow: hidden; }
+  .swatch-color { height: 48px; }
+  .swatch-label { padding: 6px 8px; background: rgba(255,255,255,0.04); font-size: 11px; color: #aaa; line-height: 1.4; }
+  .swatch-label strong { display: block; color: #ddd; font-size: 12px; }
+
+  /* ───── SCREEN MOCKUPS ───── */
+  .screen {
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid rgba(160,40,60,0.25);
+    box-shadow: 0 8px 40px rgba(150,20,40,0.2);
+  }
+  .screen-header {
+    background: rgba(160,40,60,0.08);
+    border-bottom: 1px solid rgba(160,40,60,0.15);
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .dot-r { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,80,80,0.4); }
+  .dot-y { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,200,80,0.3); }
+  .dot-g { width: 10px; height: 10px; border-radius: 50%; background: rgba(80,255,80,0.2); }
+  .screen-label { font-size: 11px; color: rgba(200,150,160,0.5); margin-left: auto; }
+
+  .screen-body {
+    background: linear-gradient(160deg, #110609 0%, #1e0b0f 100%);
+    padding: 28px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .glow-r { position:absolute; border-radius:50%; background:rgba(150,30,50,0.18); filter:blur(60px); pointer-events:none; }
+
+  /* ───── STEP 1: BIRTHDATE ───── */
+  .s1-title { font-size: 26px; font-weight: 700; color: #e8a0b0; font-family: Georgia, serif; line-height: 1.35; margin-bottom: 14px; }
+  .s1-oracle {
+    font-size: 14px; font-style: italic; color: rgba(240,190,200,0.8);
+    border-left: 3px solid rgba(160,40,60,0.7);
+    padding: 10px 14px;
+    margin-bottom: 22px;
+    line-height: 1.75;
+    background: rgba(160,40,60,0.07);
+    border-radius: 0 8px 8px 0;
+  }
+  .form-label { font-size: 12px; color: rgba(210,150,165,0.75); margin-bottom: 6px; font-weight: 600; letter-spacing: 0.04em; }
+  .form-input {
+    width: 100%; padding: 11px 14px; border-radius: 10px;
+    background: rgba(160,40,60,0.09); border: 1px solid rgba(160,40,60,0.3);
+    color: rgba(240,200,210,0.9); font-size: 14px; margin-bottom: 14px;
+    display: block;
+  }
+  .form-input-placeholder { color: rgba(160,80,100,0.5); font-style: italic; }
+  .s1-btn {
+    width: 100%; padding: 13px; text-align: center; border-radius: 10px;
+    background: linear-gradient(135deg, #a02840, #6b1a28);
+    color: #ffe8ee; font-size: 14px; font-weight: 700; letter-spacing: 0.05em; margin-top: 6px;
+  }
+
+  /* ───── STEP 2: MBTI ───── */
+  .s2-progress-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .s2-q-num { font-size: 12px; color: rgba(210,150,165,0.7); font-weight: 700; }
+  .s2-scanning { font-size: 12px; color: rgba(210,150,165,0.6); font-style: italic; }
+  .s2-bar-bg { height: 3px; background: rgba(160,40,60,0.2); border-radius: 4px; margin-bottom: 22px; }
+  .s2-bar-fill { height: 100%; width: 33%; background: #a02840; border-radius: 4px; box-shadow: 0 0 8px rgba(160,40,60,0.6); }
+  .s2-card { background: rgba(160,40,60,0.07); border: 1px solid rgba(160,40,60,0.2); border-radius: 16px; padding: 24px 20px; }
+  .s2-oracle-prefix { font-size: 11px; color: rgba(200,120,140,0.6); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 10px; }
+  .s2-question { font-size: 18px; font-weight: 600; color: #e8a0b0; font-family: Georgia, serif; line-height: 1.5; margin-bottom: 20px; }
+  .s2-option {
+    width: 100%; text-align: left; padding: 14px 16px; border-radius: 12px;
+    background: rgba(160,40,60,0.07); border: 1px solid rgba(160,40,60,0.25);
+    color: rgba(240,200,210,0.85); font-size: 13px; margin-bottom: 10px; line-height: 1.5;
+  }
+  .s2-option:last-child { margin-bottom: 0; }
+
+  /* ───── STEP 3: MAIN TAROT ───── */
+  .s3-title { font-size: 38px; font-weight: 800; color: #d4607a; font-family: Georgia, serif; text-align: center; margin-bottom: 8px; letter-spacing: -0.01em; }
+  .s3-sub { font-size: 13px; color: rgba(210,150,165,0.65); text-align: center; margin-bottom: 24px; line-height: 1.65; }
+  .s3-q-label { font-size: 14px; color: #e8a0b0; font-family: Georgia, serif; font-style: italic; text-align: center; margin-bottom: 8px; }
+  .s3-q-input { width: 100%; padding: 13px 16px; border-radius: 12px; background: rgba(160,40,60,0.08); border: 1px solid rgba(160,40,60,0.3); color: rgba(240,200,210,0.9); font-size: 14px; text-align: center; display: block; margin-bottom: 16px; }
+  .s3-shuffle-btn {
+    display: block; margin: 0 auto; padding: 12px 32px; border-radius: 40px;
+    border: 1px solid rgba(160,40,60,0.5); background: transparent;
+    color: #d4607a; font-size: 14px; font-weight: 600; letter-spacing: 0.06em;
+  }
+  .s3-fan-area {
+    width: 100%; height: 120px; background: rgba(160,40,60,0.04);
+    border: 1px dashed rgba(160,40,60,0.15); border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; color: rgba(200,120,140,0.4); margin-top: 16px; font-style: italic;
+  }
+
+  /* ───── DIALOG: CARD SELECTION ───── */
+  .dialog-bg { background: rgba(160,40,60,0.06); border: 1px solid rgba(160,40,60,0.25); border-radius: 18px; padding: 24px 20px; }
+  .dialog-title { font-size: 22px; font-weight: 700; color: #e8a0b0; font-family: Georgia, serif; text-align: center; margin-bottom: 6px; }
+  .dialog-oracle { font-size: 13px; font-style: italic; color: rgba(240,190,200,0.7); text-align: center; margin-bottom: 18px; line-height: 1.65; }
+  .dialog-cards { display: flex; gap: 8px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap; }
+  .dialog-card-slot { width: 44px; height: 64px; border-radius: 8px; background: rgba(160,40,60,0.15); border: 1px solid rgba(160,40,60,0.3); }
+  .dialog-btn-confirm { width: 100%; padding: 13px; border-radius: 10px; background: linear-gradient(135deg, #a02840, #6b1a28); color: #ffe8ee; font-size: 14px; font-weight: 700; text-align: center; }
+
+  /* ───── DIALOG: RESULT ───── */
+  .result-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .result-title { font-size: 22px; font-weight: 700; color: #d4607a; font-family: Georgia, serif; }
+  .result-close { font-size: 20px; color: rgba(200,120,140,0.5); }
+  .result-meta { font-size: 12px; color: rgba(200,140,155,0.55); margin-bottom: 16px; }
+  .result-body { font-size: 14px; color: rgba(240,200,210,0.85); line-height: 1.9; border-left: 2px solid rgba(160,40,60,0.4); padding-left: 14px; }
+  .result-footer { display: flex; gap: 12px; margin-top: 20px; }
+  .result-btn-save { flex: 1; padding: 12px; border-radius: 10px; border: 1px solid rgba(160,40,60,0.35); background: transparent; color: #d4607a; font-size: 13px; font-weight: 600; text-align: center; }
+  .result-btn-restart { flex: 1; padding: 12px; border-radius: 10px; background: linear-gradient(135deg, #a02840, #6b1a28); color: #ffe8ee; font-size: 13px; font-weight: 700; text-align: center; }
+
+  /* ───── FIXED BOTTOM BAR ───── */
+  .bottom-bar { background: rgba(10,4,6,0.92); border: 1px solid rgba(160,40,60,0.3); border-radius: 40px; padding: 12px 20px; display: flex; align-items: center; gap: 10px; margin-top: 16px; width: fit-content; }
+  .bottom-dot { width: 8px; height: 8px; border-radius: 50%; background: #a02840; }
+  .bottom-text { font-size: 13px; color: rgba(240,200,210,0.85); }
+  .bottom-text span { color: #d4607a; font-weight: 700; font-size: 16px; }
+
+  /* ───── COPY TABLE ───── */
+  .copy-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .copy-table th { text-align: left; padding: 8px 12px; color: rgba(200,140,155,0.6); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; border-bottom: 1px solid rgba(160,40,60,0.2); }
+  .copy-table td { padding: 9px 12px; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: top; line-height: 1.5; }
+  .copy-table td:first-child { color: rgba(200,140,155,0.55); font-size: 12px; white-space: nowrap; }
+  .copy-table td:nth-child(2) { color: rgba(180,180,180,0.5); text-decoration: line-through; }
+  .copy-table td:nth-child(3) { color: #e8a0b0; font-style: italic; }
+  .copy-table tr:last-child td { border-bottom: none; }
+</style>
+</head>
+<body>
+
+<h1>점술가 테마 — 전체 디자인</h1>
+<p class="page-sub">C안 심홍색 × "이미 보고 있다" 강도 적용 전체 화면 미리보기</p>
+
+<!-- ── PALETTE ── -->
+<div class="section">
+  <h2>컬러 팔레트</h2>
+  <div class="swatches">
+    <div class="swatch">
+      <div class="swatch-color" style="background:#0e0608"></div>
+      <div class="swatch-label"><strong>Background</strong>#0e0608<br/>거의 검은 심홍</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#a02840"></div>
+      <div class="swatch-label"><strong>Primary</strong>#a02840<br/>심홍 (버건디)</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#6b1a28"></div>
+      <div class="swatch-label"><strong>Secondary</strong>#6b1a28<br/>짙은 암적색</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#d4607a"></div>
+      <div class="swatch-label"><strong>Accent</strong>#d4607a<br/>장미빛 강조</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#e8a0b0"></div>
+      <div class="swatch-label"><strong>Foreground</strong>#e8a0b0<br/>따뜻한 크림핑크</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── STEP 1: BIRTHDATE ── -->
+<div class="section">
+  <h2>Step 1 — 정보 입력</h2>
+  <div class="screen">
+    <div class="screen-header">
+      <div class="dot-r"></div><div class="dot-y"></div><div class="dot-g"></div>
+      <span class="screen-label">BirthdateStep</span>
+    </div>
+    <div class="screen-body">
+      <div class="glow-r" style="width:200px;height:200px;top:-50px;right:-50px;"></div>
+      <div class="glow-r" style="width:140px;height:140px;bottom:-40px;left:-40px;opacity:0.7;"></div>
+      <div class="s1-title">말하지 않아도 됩니다.<br/>이미 보고 있으니까요.</div>
+      <div class="s1-oracle">"그렇지만... 이름과 태어난 날만큼은 직접 알려주셔야 합니다. 그것은 당신만이 줄 수 있는 것이니."</div>
+      <div class="form-label">당신의 이름 *</div>
+      <div class="form-input"><span class="form-input-placeholder">숨기지 않아도 됩니다</span></div>
+      <div class="form-label">이 세상에 태어난 날 *</div>
+      <div class="form-input"><span class="form-input-placeholder">운명이 시작된 날</span></div>
+      <div class="form-label">태어난 시간 &nbsp;<span style="font-size:11px;color:rgba(160,80,100,0.5);font-weight:400;">(모른다면 괜찮습니다)</span></div>
+      <div class="form-input"><span class="form-input-placeholder">기억하지 못해도 읽을 수 있습니다</span></div>
+      <div class="s1-btn">운명의 문 앞에 서다</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── STEP 2: MBTI ── -->
+<div class="section">
+  <h2>Step 2 — 점술가의 심문 (MBTI)</h2>
+  <div class="screen">
+    <div class="screen-header">
+      <div class="dot-r"></div><div class="dot-y"></div><div class="dot-g"></div>
+      <span class="screen-label">MbtiQuizStep</span>
+    </div>
+    <div class="screen-body">
+      <div class="glow-r" style="width:160px;height:160px;top:-40px;right:-30px;"></div>
+      <div class="s2-progress-row">
+        <span class="s2-q-num">Q4 / 12</span>
+        <span class="s2-scanning">당신의 본질을 읽는 중...</span>
+      </div>
+      <div class="s2-bar-bg"><div class="s2-bar-fill"></div></div>
+      <div class="s2-card">
+        <div class="s2-oracle-prefix">점술가가 묻습니다</div>
+        <div class="s2-question">요리를 하려고 레시피를 찾아봤습니다.<br/>당신의 요리 스타일은?</div>
+        <div class="s2-option">계량스푼을 꺼내어 레시피에 적힌 정량과 순서를 정확히 따른다.</div>
+        <div class="s2-option">대충 눈대중으로 넣고, 내 감에 맞춰 재료를 추가하거나 응용한다.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── STEP 3: MAIN ── -->
+<div class="section">
+  <h2>Step 3 — 메인 타로 화면</h2>
+  <div class="screen">
+    <div class="screen-header">
+      <div class="dot-r"></div><div class="dot-y"></div><div class="dot-g"></div>
+      <span class="screen-label">page.tsx — tarot step</span>
+    </div>
+    <div class="screen-body">
+      <div class="glow-r" style="width:220px;height:220px;top:-60px;right:-60px;"></div>
+      <div class="glow-r" style="width:160px;height:160px;bottom:-50px;left:-50px;opacity:0.7;"></div>
+      <div class="s3-title">Tarotal</div>
+      <div class="s3-sub">INTJ의 내면을 꿰뚫는 5장의 패를 집으십시오.<br/>이미 무엇을 원하는지 알고 있습니다.</div>
+      <div class="s3-q-label">무엇을 알고 싶습니까?</div>
+      <div class="s3-q-input"><span style="color:rgba(160,80,100,0.45);font-style:italic;">직접 말하지 않아도 됩니다. 하지만 물음이 있다면...</span></div>
+      <div style="text-align:center;"><div class="s3-shuffle-btn">패를 섞다</div></div>
+      <div class="s3-fan-area">카드 78장이 펼쳐지는 곳</div>
+      <!-- Fixed bottom bar preview -->
+      <div style="margin-top:16px;display:flex;justify-content:center;">
+        <div class="bottom-bar">
+          <div class="bottom-dot"></div>
+          <div class="bottom-text"><span>3</span>장의 패가 선택되었습니다</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── DIALOG: CONFIRM ── -->
+<div class="section">
+  <h2>카드 선택 확인 다이얼로그</h2>
+  <div class="screen">
+    <div class="screen-header">
+      <div class="dot-r"></div><div class="dot-y"></div><div class="dot-g"></div>
+      <span class="screen-label">CardSelectionDialog</span>
+    </div>
+    <div class="screen-body">
+      <div class="glow-r" style="width:150px;height:150px;top:-30px;right:-30px;"></div>
+      <div class="dialog-bg">
+        <div class="dialog-title">패가 정해졌습니다</div>
+        <div class="dialog-oracle">3장의 패를 선택하셨습니다.<br/>이제 당신의 운명을 들여다보겠습니다.</div>
+        <div class="dialog-cards">
+          <div class="dialog-card-slot"></div>
+          <div class="dialog-card-slot"></div>
+          <div class="dialog-card-slot"></div>
+        </div>
+        <div class="dialog-btn-confirm">운명을 마주하다</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── DIALOG: RESULT ── -->
+<div class="section">
+  <h2>결과 모달</h2>
+  <div class="screen">
+    <div class="screen-header">
+      <div class="dot-r"></div><div class="dot-y"></div><div class="dot-g"></div>
+      <span class="screen-label">CardInterpretations</span>
+    </div>
+    <div class="screen-body">
+      <div class="glow-r" style="width:160px;height:160px;top:-40px;right:-30px;"></div>
+      <div class="result-header">
+        <div class="result-title">당신의 패를 읽겠습니다</div>
+        <div class="result-close">✕</div>
+      </div>
+      <div class="result-meta">🕯 내담자: <strong style="color:rgba(230,180,190,0.85)">김지수</strong>님 (1995.03.14 / INTJ) &nbsp;|&nbsp; 2026.04.05 오후 9:32</div>
+      <div class="result-body">
+        당신이 선택한 세 장의 패는 지금 이 순간, 당신이 마주하고 있는 현실의 단면을 보여줍니다...
+        <br/><br/>
+        <strong style="color:#d4607a">첫 번째 패 — 죽음 (역방향)</strong><br/>
+        끝이라고 생각하는 것이 끝이 아닙니다. 당신은 아직 놓지 못한 것이 있군요.
+      </div>
+      <div class="result-footer">
+        <div class="result-btn-save">저장하기</div>
+        <div class="result-btn-restart">다시 운명을 마주하다</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── COPY CHANGES ── -->
+<div class="section">
+  <h2>주요 문구 변경 목록</h2>
+  <table class="copy-table">
+    <tr><th>위치</th><th>기존 (우주)</th><th>변경 (점술가)</th></tr>
+    <tr><td>BirthdateStep 제목</td><td>다음에 펼쳐질 당신의 이야기</td><td>말하지 않아도 됩니다. 이미 보고 있으니까요.</td></tr>
+    <tr><td>이름 placeholder</td><td>당신을 부를 이름을 알려주세요</td><td>숨기지 않아도 됩니다</td></tr>
+    <tr><td>생년월일 label</td><td>생년월일</td><td>이 세상에 태어난 날</td></tr>
+    <tr><td>시간 모름 체크박스</td><td>모름</td><td>기억하지 못합니다</td></tr>
+    <tr><td>시작 버튼</td><td>나만의 운명 여정 시작하기</td><td>운명의 문 앞에 서다</td></tr>
+    <tr><td>MBTI 진행 텍스트</td><td>우주의 진동 주파수 분석중...</td><td>당신의 본질을 읽는 중...</td></tr>
+    <tr><td>MBTI 질문 접두어</td><td>(없음)</td><td>점술가가 묻습니다</td></tr>
+    <tr><td>메인 부제목</td><td>MBTI의 기운을 담아... 5장 선택</td><td>MBTI의 내면을 꿰뚫는 5장의 패를 집으십시오</td></tr>
+    <tr><td>질문 레이블</td><td>무엇이 알고 싶으신가요?</td><td>무엇을 알고 싶습니까?</td></tr>
+    <tr><td>질문 placeholder</td><td>예: 오늘 저의 연애운은...</td><td>직접 말하지 않아도 됩니다. 하지만 물음이 있다면...</td></tr>
+    <tr><td>셔플 버튼</td><td>카드 섞기 / 우주의 기운을 모으는 중...</td><td>패를 섞다 / 패를 섞는 중...</td></tr>
+    <tr><td>하단 선택 카운터</td><td>선택한 카드: N장 (최대 5장)</td><td>N장의 패가 선택되었습니다</td></tr>
+    <tr><td>확인 버튼</td><td>N장 카드 선택 완료 (결과 보기)</td><td>이 N장의 패로 운명을 읽겠습니다</td></tr>
+    <tr><td>다이얼로그 제목</td><td>선택 완료</td><td>패가 정해졌습니다</td></tr>
+    <tr><td>다이얼로그 설명</td><td>이제 우주의 메시지를 확인해볼까요?</td><td>이제 당신의 운명을 들여다보겠습니다.</td></tr>
+    <tr><td>해석 확인 버튼</td><td>해석 보기</td><td>운명을 마주하다</td></tr>
+    <tr><td>카드 프리뷰 설명</td><td>선택하신 카드의 기운을 느껴보세요</td><td>이 패가 당신에게 오고 있었습니다</td></tr>
+    <tr><td>결과 모달 제목</td><td>운명의 흐름 해석</td><td>당신의 패를 읽겠습니다</td></tr>
+    <tr><td>내담자 아이콘</td><td>🔮</td><td>🕯</td></tr>
+    <tr><td>다시 시작 버튼</td><td>처음으로</td><td>다시 운명을 마주하다</td></tr>
+  </table>
+</div>
+
+</body>
+</html>

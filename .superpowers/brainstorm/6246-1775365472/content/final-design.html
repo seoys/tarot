@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>최종 디자인 확인</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0d0a10; color: #d4c0e0; font-family: -apple-system, 'Noto Sans KR', sans-serif; padding: 28px 18px 60px; max-width: 700px; margin: 0 auto; }
+
+  h1 { font-size: 20px; color: #c8b0dc; font-weight: 700; margin-bottom: 4px; }
+  .sub { font-size: 13px; color: rgba(180,160,200,0.5); margin-bottom: 32px; }
+  h2 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; color: rgba(140,100,170,0.7); margin-bottom: 14px; padding-bottom: 7px; border-bottom: 1px solid rgba(120,80,160,0.2); }
+  .section { margin-bottom: 36px; }
+
+  /* PALETTE */
+  .swatches { display:flex; gap:8px; }
+  .sw { flex:1; border-radius:10px; overflow:hidden; }
+  .sw-color { height:44px; }
+  .sw-label { padding:6px 8px; background:rgba(255,255,255,0.04); font-size:11px; color:#998; line-height:1.4; }
+  .sw-label strong { display:block; color:#ccc; font-size:12px; }
+
+  /* SCREEN */
+  .screen { border-radius:20px; overflow:hidden; border:1px solid rgba(120,80,160,0.25); box-shadow:0 8px 40px rgba(80,40,120,0.2); margin-bottom:4px; }
+  .screen-header { background:rgba(100,60,140,0.08); border-bottom:1px solid rgba(100,60,140,0.15); padding:8px 16px; display:flex; align-items:center; gap:6px; }
+  .dot { width:10px; height:10px; border-radius:50%; }
+  .screen-lbl { font-size:11px; color:rgba(180,150,210,0.4); margin-left:auto; }
+  .screen-body { background:linear-gradient(160deg,#0d0a10 0%,#160f1c 100%); padding:28px 22px; position:relative; overflow:hidden; }
+  .glow { position:absolute; border-radius:50%; filter:blur(70px); pointer-events:none; }
+
+  /* SHARED FORM ELEMENTS */
+  .tag { display:inline-block; font-size:11px; font-weight:700; padding:3px 10px; border-radius:20px; letter-spacing:.1em; margin-bottom:14px; text-transform:uppercase; background:rgba(130,90,170,0.18); color:#b090d0; border:1px solid rgba(140,100,170,0.35); }
+  .screen-title { font-size:24px; font-weight:700; font-family:Georgia,serif; line-height:1.35; margin-bottom:14px; color:#d4c0e0; }
+  .oracle-line { font-size:13px; font-style:italic; color:rgba(220,200,235,0.75); border-left:3px solid rgba(140,100,170,0.6); padding:10px 14px; margin-bottom:20px; line-height:1.75; background:rgba(120,80,160,0.08); border-radius:0 8px 8px 0; }
+  .f-label { font-size:12px; color:rgba(200,175,220,0.7); margin-bottom:6px; font-weight:600; letter-spacing:.04em; }
+  .f-input { width:100%; padding:11px 14px; border-radius:10px; background:rgba(120,80,160,0.1); border:1px solid rgba(140,100,170,0.3); color:rgba(220,200,235,0.9); font-size:13px; margin-bottom:13px; display:block; }
+  .f-ph { color:rgba(160,120,190,0.45); font-style:italic; }
+  .f-btn { width:100%; padding:13px; text-align:center; border-radius:10px; background:linear-gradient(135deg,#7a5090,#4a2860); color:#ede0f8; font-size:14px; font-weight:700; letter-spacing:.05em; margin-top:4px; }
+
+  /* MBTI */
+  .prog-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:7px; }
+  .prog-qn { font-size:12px; color:rgba(200,175,220,0.65); font-weight:700; }
+  .prog-status { font-size:12px; color:rgba(200,175,220,0.55); font-style:italic; }
+  .prog-bar { height:3px; background:rgba(120,80,160,0.2); border-radius:4px; margin-bottom:20px; }
+  .prog-fill { height:100%; width:33%; background:#7a5090; border-radius:4px; box-shadow:0 0 8px rgba(120,80,160,0.6); }
+  .q-card { background:rgba(120,80,160,0.07); border:1px solid rgba(120,80,160,0.2); border-radius:16px; padding:22px 18px; }
+  .q-prefix { font-size:11px; color:rgba(180,140,210,0.55); text-transform:uppercase; letter-spacing:.12em; margin-bottom:9px; }
+  .q-text { font-size:17px; font-weight:600; color:#d4c0e0; font-family:Georgia,serif; line-height:1.5; margin-bottom:18px; }
+  .q-opt { width:100%; text-align:left; padding:13px 15px; border-radius:12px; background:rgba(120,80,160,0.07); border:1px solid rgba(120,80,160,0.22); color:rgba(220,200,235,0.82); font-size:13px; margin-bottom:9px; line-height:1.5; display:block; }
+
+  /* MAIN */
+  .main-title { font-size:40px; font-weight:800; color:#b08fc0; font-family:Georgia,serif; text-align:center; margin-bottom:8px; }
+  .main-sub { font-size:13px; color:rgba(190,165,210,0.6); text-align:center; margin-bottom:22px; line-height:1.65; }
+  .main-q-label { font-size:14px; color:#d4c0e0; font-family:Georgia,serif; font-style:italic; text-align:center; margin-bottom:8px; }
+  .main-q-input { width:100%; padding:13px 16px; border-radius:12px; background:rgba(120,80,160,0.08); border:1px solid rgba(140,100,170,0.28); color:rgba(220,200,235,0.88); font-size:13px; text-align:center; display:block; margin-bottom:16px; }
+  .main-shuffle { display:block; margin:0 auto; padding:11px 30px; border-radius:40px; border:1px solid rgba(140,100,170,0.45); background:transparent; color:#b08fc0; font-size:13px; font-weight:600; letter-spacing:.06em; width:fit-content; }
+  .fan-area { width:100%; height:100px; background:rgba(120,80,160,0.04); border:1px dashed rgba(120,80,160,0.15); border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:12px; color:rgba(180,140,210,0.35); margin-top:14px; font-style:italic; }
+  .bottom-bar { background:rgba(13,10,16,0.92); border:1px solid rgba(120,80,160,0.3); border-radius:40px; padding:10px 18px; display:flex; align-items:center; gap:9px; margin:14px auto 0; width:fit-content; }
+  .bottom-dot { width:7px; height:7px; border-radius:50%; background:#7a5090; }
+  .bottom-txt { font-size:13px; color:rgba(220,200,235,0.8); }
+  .bottom-txt span { color:#b08fc0; font-weight:700; font-size:16px; }
+
+  /* CONFIRM DIALOG */
+  .dlg { background:rgba(120,80,160,0.07); border:1px solid rgba(120,80,160,0.22); border-radius:18px; padding:22px 18px; }
+  .dlg-title { font-size:22px; font-weight:700; color:#d4c0e0; font-family:Georgia,serif; text-align:center; margin-bottom:6px; }
+  .dlg-sub { font-size:13px; font-style:italic; color:rgba(210,185,230,0.65); text-align:center; margin-bottom:18px; line-height:1.65; }
+  .dlg-cards { display:flex; gap:8px; justify-content:center; margin-bottom:18px; }
+  .dlg-slot { width:42px; height:62px; border-radius:8px; background:rgba(120,80,160,0.15); border:1px solid rgba(140,100,170,0.28); }
+  .dlg-btn { width:100%; padding:13px; border-radius:10px; background:linear-gradient(135deg,#7a5090,#4a2860); color:#ede0f8; font-size:14px; font-weight:700; text-align:center; }
+
+  /* RESULT MODAL */
+  .res-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+  .res-title { font-size:21px; font-weight:700; color:#b08fc0; font-family:Georgia,serif; }
+  .res-close { font-size:18px; color:rgba(180,150,210,0.4); }
+  .res-meta { font-size:12px; color:rgba(180,155,200,0.5); margin-bottom:14px; }
+  .res-body { font-size:14px; color:rgba(220,200,235,0.82); line-height:1.9; border-left:2px solid rgba(120,80,160,0.4); padding-left:14px; }
+  .res-footer { display:flex; gap:10px; margin-top:18px; }
+  .res-save { flex:1; padding:12px; border-radius:10px; border:1px solid rgba(120,80,160,0.35); background:transparent; color:#b08fc0; font-size:13px; font-weight:600; text-align:center; }
+  .res-restart { flex:1; padding:12px; border-radius:10px; background:linear-gradient(135deg,#7a5090,#4a2860); color:#ede0f8; font-size:13px; font-weight:700; text-align:center; }
+
+  /* COPY TABLE */
+  .copy-table { width:100%; border-collapse:collapse; font-size:13px; }
+  .copy-table th { text-align:left; padding:8px 10px; color:rgba(180,150,210,0.55); font-size:11px; text-transform:uppercase; letter-spacing:.08em; border-bottom:1px solid rgba(120,80,160,0.2); }
+  .copy-table td { padding:9px 10px; border-bottom:1px solid rgba(255,255,255,0.04); vertical-align:top; line-height:1.5; }
+  .copy-table td:first-child { color:rgba(180,150,210,0.5); font-size:12px; white-space:nowrap; width:30%; }
+  .copy-table td:nth-child(2) { color:rgba(170,170,170,0.4); text-decoration:line-through; font-size:12px; }
+  .copy-table td:nth-child(3) { color:#c8b0dc; font-style:italic; }
+  .copy-table tr:last-child td { border-bottom:none; }
+</style>
+</head>
+<body>
+
+<h1>최종 디자인 확인</h1>
+<p class="sub">다크 벨벳 퍼플 × "이미 보고 있다" 점술가 톤 — 전체 화면</p>
+
+<!-- PALETTE -->
+<div class="section">
+  <h2>컬러 팔레트</h2>
+  <div class="swatches">
+    <div class="sw"><div class="sw-color" style="background:#0d0a10"></div><div class="sw-label"><strong>Background</strong>먹빛 보라흑</div></div>
+    <div class="sw"><div class="sw-color" style="background:#7a5090"></div><div class="sw-label"><strong>Primary</strong>다크 퍼플</div></div>
+    <div class="sw"><div class="sw-color" style="background:#4a2860"></div><div class="sw-label"><strong>Secondary</strong>딥 바이올렛</div></div>
+    <div class="sw"><div class="sw-color" style="background:#b08fc0"></div><div class="sw-label"><strong>Accent</strong>뮤트 라벤더</div></div>
+    <div class="sw"><div class="sw-color" style="background:#d4c0e0"></div><div class="sw-label"><strong>Foreground</strong>크림 라일락</div></div>
+  </div>
+</div>
+
+<!-- STEP 1 -->
+<div class="section">
+  <h2>Step 1 — 정보 입력</h2>
+  <div class="screen">
+    <div class="screen-header">
+      <div class="dot" style="background:rgba(255,80,80,.35)"></div>
+      <div class="dot" style="background:rgba(255,200,80,.28)"></div>
+      <div class="dot" style="background:rgba(80,200,80,.2)"></div>
+      <span class="screen-lbl">BirthdateStep</span>
+    </div>
+    <div class="screen-body">
+      <div class="glow" style="width:200px;height:200px;top:-50px;right:-40px;background:rgba(110,70,150,.14)"></div>
+      <div class="glow" style="width:130px;height:130px;bottom:-35px;left:-30px;background:rgba(80,50,120,.1)"></div>
+      <span class="tag">입문</span>
+      <div class="screen-title">말하지 않아도 됩니다.<br/>이미 보고 있으니까요.</div>
+      <div class="oracle-line">"그렇지만... 이름과 태어난 날만큼은 직접 알려주셔야 합니다. 그것은 당신만이 줄 수 있는 것이니."</div>
+      <div class="f-label">당신의 이름 *</div>
+      <div class="f-input"><span class="f-ph">숨기지 않아도 됩니다</span></div>
+      <div class="f-label">이 세상에 태어난 날 *</div>
+      <div class="f-input"><span class="f-ph">운명이 시작된 날</span></div>
+      <div class="f-label">태어난 시간 &nbsp;<span style="font-size:11px;color:rgba(160,120,190,.45);font-weight:400">기억하지 못해도 읽을 수 있습니다</span></div>
+      <div class="f-input"><span class="f-ph">알고 있다면 알려주십시오</span></div>
+      <div class="f-btn">운명의 문 앞에 서다</div>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 2 -->
+<div class="section">
+  <h2>Step 2 — 점술가의 심문 (MBTI)</h2>
+  <div class="screen">
+    <div class="screen-header">
+      <div class="dot" style="background:rgba(255,80,80,.35)"></div>
+      <div class="dot" style="background:rgba(255,200,80,.28)"></div>
+      <div class="dot" style="background:rgba(80,200,80,.2)"></div>
+      <span class="screen-lbl">MbtiQuizStep</span>
+    </div>
+    <div class="screen-body">
+      <div class="glow" style="width:180px;height:180px;top:-40px;right:-30px;background:rgba(110,70,150,.13)"></div>
+      <div class="prog-row">
+        <span class="prog-qn">Q4 / 12</span>
+        <span class="prog-status">당신의 본질을 읽는 중...</span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill"></div></div>
+      <div class="q-card">
+        <div class="q-prefix">점술가가 묻습니다</div>
+        <div class="q-text">요리를 하려고 레시피를 찾아봤습니다.<br/>당신의 요리 스타일은?</div>
+        <div class="q-opt">계량스푼을 꺼내어 레시피에 적힌 정량과 순서를 정확히 따른다.</div>
+        <div class="q-opt" style="margin-bottom:0">대충 눈대중으로 넣고, 내 감에 맞춰 재료를 추가하거나 응용한다.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 3: MAIN -->
+<div class="section">
+  <h2>Step 3 — 메인 타로 화면</h2>
+  <div class="screen">
+    <div class="screen-header">
+      <div class="dot" style="background:rgba(255,80,80,.35)"></div>
+      <div class="dot" style="background:rgba(255,200,80,.28)"></div>
+      <div class="dot" style="background:rgba(80,200,80,.2)"></div>
+      <span class="screen-lbl">page.tsx — tarot step</span>
+    </div>
+    <div class="screen-body">
+      <div class="glow" style="width:220px;height:220px;top:-60px;right:-60px;background:rgba(110,70,150,.13)"></div>
+      <div class="glow" style="width:160px;height:160px;bottom:-50px;left:-50px;background:rgba(80,50,120,.1)"></div>
+      <div class="main-title">Tarotal</div>
+      <div class="main-sub">INTJ의 내면을 꿰뚫는 5장의 패를 집으십시오.<br/>이미 무엇을 원하는지 알고 있습니다.</div>
+      <div class="main-q-label">무엇을 알고 싶습니까?</div>
+      <div class="main-q-input"><span class="f-ph">직접 말하지 않아도 됩니다. 하지만 물음이 있다면...</span></div>
+      <div class="main-shuffle">패를 섞다</div>
+      <div class="fan-area">카드 78장이 펼쳐지는 곳</div>
+      <div class="bottom-bar">
+        <div class="bottom-dot"></div>
+        <div class="bottom-txt"><span>3</span>장의 패가 선택되었습니다</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM DIALOG -->
+<div class="section">
+  <h2>카드 선택 확인 다이얼로그</h2>
+  <div class="screen">
+    <div class="screen-header">
+      <div class="dot" style="background:rgba(255,80,80,.35)"></div>
+      <div class="dot" style="background:rgba(255,200,80,.28)"></div>
+      <div class="dot" style="background:rgba(80,200,80,.2)"></div>
+      <span class="screen-lbl">CardSelectionDialog</span>
+    </div>
+    <div class="screen-body">
+      <div class="glow" style="width:150px;height:150px;top:-30px;right:-30px;background:rgba(110,70,150,.13)"></div>
+      <div class="dlg">
+        <div class="dlg-title">패가 정해졌습니다</div>
+        <div class="dlg-sub">3장의 패를 선택하셨습니다.<br/>이제 당신의 운명을 들여다보겠습니다.</div>
+        <div class="dlg-cards">
+          <div class="dlg-slot"></div><div class="dlg-slot"></div><div class="dlg-slot"></div>
+        </div>
+        <div class="dlg-btn">운명을 마주하다</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RESULT MODAL -->
+<div class="section">
+  <h2>결과 모달</h2>
+  <div class="screen">
+    <div class="screen-header">
+      <div class="dot" style="background:rgba(255,80,80,.35)"></div>
+      <div class="dot" style="background:rgba(255,200,80,.28)"></div>
+      <div class="dot" style="background:rgba(80,200,80,.2)"></div>
+      <span class="screen-lbl">CardInterpretations</span>
+    </div>
+    <div class="screen-body">
+      <div class="glow" style="width:160px;height:160px;top:-40px;right:-30px;background:rgba(110,70,150,.13)"></div>
+      <div class="res-header">
+        <div class="res-title">당신의 패를 읽겠습니다</div>
+        <div class="res-close">✕</div>
+      </div>
+      <div class="res-meta">🕯 내담자: <strong style="color:rgba(210,190,230,.85)">김지수</strong>님 (1995.03.14 / INTJ)&nbsp;|&nbsp;2026.04.05 오후 9:32</div>
+      <div class="res-body">
+        당신이 선택한 세 장의 패는 지금 이 순간 당신이 마주하고 있는 현실의 단면을 보여줍니다...<br/><br/>
+        <strong style="color:#b08fc0">첫 번째 패 — 죽음 (역방향)</strong><br/>
+        끝이라고 생각하는 것이 끝이 아닙니다. 당신은 아직 놓지 못한 것이 있군요.
+      </div>
+      <div class="res-footer">
+        <div class="res-save">저장하기</div>
+        <div class="res-restart">다시 운명을 마주하다</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- COPY TABLE -->
+<div class="section">
+  <h2>전체 문구 변경 목록</h2>
+  <table class="copy-table">
+    <tr><th>위치</th><th>기존</th><th>변경</th></tr>
+    <tr><td>Birthdate 제목</td><td>다음에 펼쳐질 당신의 이야기</td><td>말하지 않아도 됩니다. 이미 보고 있으니까요.</td></tr>
+    <tr><td>Birthdate 설명</td><td>당신을 향해 다가오는 운명의 흐름...</td><td>(점술가 독백으로 교체)</td></tr>
+    <tr><td>이름 placeholder</td><td>당신을 부를 이름을 알려주세요</td><td>숨기지 않아도 됩니다</td></tr>
+    <tr><td>생년월일 label</td><td>생년월일</td><td>이 세상에 태어난 날</td></tr>
+    <tr><td>시간 placeholder</td><td>(없음)</td><td>알고 있다면 알려주십시오</td></tr>
+    <tr><td>시간 모름 체크박스</td><td>모름</td><td>기억하지 못합니다</td></tr>
+    <tr><td>시작 버튼</td><td>나만의 운명 여정 시작하기</td><td>운명의 문 앞에 서다</td></tr>
+    <tr><td>MBTI 진행 상태</td><td>우주의 진동 주파수 분석중...</td><td>당신의 본질을 읽는 중...</td></tr>
+    <tr><td>MBTI 질문 접두어</td><td>(없음)</td><td>점술가가 묻습니다</td></tr>
+    <tr><td>메인 부제목</td><td>MBTI의 기운을 담아... 5장 선택</td><td>MBTI의 내면을 꿰뚫는 5장의 패를 집으십시오.</td></tr>
+    <tr><td>질문 레이블</td><td>무엇이 알고 싶으신가요?</td><td>무엇을 알고 싶습니까?</td></tr>
+    <tr><td>질문 placeholder</td><td>예: 오늘 저의 연애운은 어떤가요?</td><td>직접 말하지 않아도 됩니다. 하지만 물음이 있다면...</td></tr>
+    <tr><td>셔플 버튼 (대기)</td><td>카드 섞기</td><td>패를 섞다</td></tr>
+    <tr><td>셔플 버튼 (진행중)</td><td>우주의 기운을 모으는 중...</td><td>패를 섞는 중...</td></tr>
+    <tr><td>하단 카운터</td><td>선택한 카드: N장 (최대 5장)</td><td>N장의 패가 선택되었습니다</td></tr>
+    <tr><td>3장 선택시 힌트</td><td>더 깊은 조언을 원한다면 5장까지...</td><td>더 깊이 들어가시겠습니까? 2장이 더 남아 있습니다</td></tr>
+    <tr><td>확인 버튼</td><td>N장 카드 선택 완료 (결과 보기)</td><td>이 N장의 패로 운명을 읽겠습니다</td></tr>
+    <tr><td>다이얼로그 제목</td><td>선택 완료</td><td>패가 정해졌습니다</td></tr>
+    <tr><td>다이얼로그 설명</td><td>이제 우주의 메시지를 확인해볼까요?</td><td>이제 당신의 운명을 들여다보겠습니다.</td></tr>
+    <tr><td>해석 버튼</td><td>해석 보기</td><td>운명을 마주하다</td></tr>
+    <tr><td>카드 프리뷰 설명</td><td>선택하신 카드의 기운을 느껴보세요</td><td>이 패가 당신에게 오고 있었습니다</td></tr>
+    <tr><td>프리뷰 닫기</td><td>닫기</td><td>알겠습니다</td></tr>
+    <tr><td>결과 모달 제목</td><td>운명의 흐름 해석</td><td>당신의 패를 읽겠습니다</td></tr>
+    <tr><td>내담자 아이콘</td><td>🔮</td><td>🕯</td></tr>
+    <tr><td>다시 시작 버튼</td><td>처음으로</td><td>다시 운명을 마주하다</td></tr>
+    <tr><td>해석중 로딩 텍스트</td><td>카드의 메시지를 해석하고 있습니다...</td><td>운명의 패를 읽고 있습니다...</td></tr>
+    <tr><td>최소 선택 안내</td><td>최소 3장의 카드를 선택해야 합니다</td><td>최소 3장의 패가 필요합니다</td></tr>
+    <tr><td>Toast — 질문 없음</td><td>질문을 입력해주세요</td><td>물음이 없으면 패를 읽을 수 없습니다</td></tr>
+    <tr><td>Toast — 카드 없음</td><td>카드를 선택해주세요</td><td>패를 선택하십시오</td></tr>
+    <tr><td>Toast — 오류</td><td>오류가 발생했습니다</td><td>운명의 실이 끊겼습니다</td></tr>
+    <tr><td>배경 글로우 색상</td><td>보라/시안 (우주)</td><td>딥 퍼플 (벨벳)</td></tr>
+  </table>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>팔레트 조정</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0a0406; color: #f0e0e4; font-family: -apple-system, 'Noto Sans KR', sans-serif; padding: 28px 18px 60px; max-width: 700px; margin: 0 auto; }
+  h1 { font-size: 20px; color: #e0d0d5; font-weight: 700; margin-bottom: 6px; }
+  .sub { font-size: 13px; color: rgba(200,170,175,0.55); margin-bottom: 32px; }
+
+  .palette-card {
+    border-radius: 18px;
+    overflow: hidden;
+    margin-bottom: 22px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.25s ease;
+  }
+  .palette-card:hover { transform: translateY(-2px); }
+  .palette-card.selected { box-shadow: 0 0 0 3px rgba(200,180,190,0.35); border-color: rgba(200,180,190,0.5) !important; }
+
+  .preview {
+    padding: 28px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .glow { position:absolute; border-radius:50%; filter:blur(70px); pointer-events:none; }
+
+  /* ── A: Dark Velvet ── */
+  .a .preview { background: linear-gradient(150deg, #0d0a10 0%, #160f1c 100%); }
+  .a .accent { color: #b08fc0; }
+  .a .title { color: #d4c0e0; }
+  .a .sub-txt { color: rgba(200,180,215,0.6); }
+  .a .oracle { border-left-color: rgba(140,100,170,0.6); background: rgba(120,80,160,0.08); color: rgba(220,200,235,0.75); }
+  .a .inp { background: rgba(120,80,160,0.1); border-color: rgba(140,100,170,0.3); color: rgba(220,200,235,0.85); }
+  .a .btn { background: linear-gradient(135deg, #7a5090, #4a2860); color: #ede0f8; }
+  .a .glow-1 { background: rgba(110,70,150,0.14); }
+  .a .glow-2 { background: rgba(80,50,120,0.1); }
+  .a .tag { background: rgba(130,90,170,0.18); color: #b090d0; border-color: rgba(140,100,170,0.35); }
+
+  /* ── B: Ink & Antique Gold ── */
+  .b .preview { background: linear-gradient(150deg, #080608 0%, #120e0a 100%); }
+  .b .accent { color: #b89a50; }
+  .b .title { color: #d4bc88; }
+  .b .sub-txt { color: rgba(200,180,140,0.55); }
+  .b .oracle { border-left-color: rgba(160,130,60,0.6); background: rgba(140,110,40,0.07); color: rgba(220,200,160,0.75); }
+  .b .inp { background: rgba(140,110,40,0.08); border-color: rgba(160,130,60,0.3); color: rgba(220,200,160,0.85); }
+  .b .btn { background: linear-gradient(135deg, #8a6830, #5a4010); color: #f8eecc; }
+  .b .glow-1 { background: rgba(140,110,40,0.12); }
+  .b .glow-2 { background: rgba(100,80,20,0.09); }
+  .b .tag { background: rgba(150,120,50,0.16); color: #c0a060; border-color: rgba(160,130,60,0.35); }
+
+  /* ── C: Charcoal & Muted Rose ── */
+  .c .preview { background: linear-gradient(150deg, #0c0a0b 0%, #1a1215 100%); }
+  .c .accent { color: #b07880; }
+  .c .title { color: #d0a8b0; }
+  .c .sub-txt { color: rgba(200,165,170,0.55); }
+  .c .oracle { border-left-color: rgba(140,80,90,0.5); background: rgba(120,60,70,0.07); color: rgba(215,185,190,0.75); }
+  .c .inp { background: rgba(120,60,70,0.08); border-color: rgba(140,80,90,0.28); color: rgba(220,190,195,0.85); }
+  .c .btn { background: linear-gradient(135deg, #7a4852, #4a2830); color: #fce8ec; }
+  .c .glow-1 { background: rgba(120,55,65,0.12); }
+  .c .glow-2 { background: rgba(90,40,50,0.09); }
+  .c .tag { background: rgba(130,65,75,0.16); color: #b07880; border-color: rgba(140,80,90,0.32); }
+
+  .tag { display:inline-block; font-size:11px; font-weight:700; padding:3px 10px; border-radius:20px; letter-spacing:.1em; margin-bottom:14px; text-transform:uppercase; border:1px solid; }
+  .title { font-size:24px; font-weight:700; font-family:Georgia,serif; line-height:1.35; margin-bottom:12px; }
+  .oracle { font-size:13px; font-style:italic; border-left-width:3px; border-left-style:solid; padding:10px 14px; margin-bottom:18px; line-height:1.75; border-radius:0 8px 8px 0; }
+  .inp { width:100%; padding:10px 14px; border-radius:10px; border-width:1px; border-style:solid; font-size:13px; margin-bottom:10px; display:block; }
+  .inp-placeholder { font-style:italic; opacity:0.5; }
+  .btn { width:100%; padding:12px; text-align:center; border-radius:10px; font-size:13px; font-weight:700; letter-spacing:.05em; margin-top:4px; border:none; }
+
+  .swatches { display:flex; gap:8px; margin-top:0; }
+  .sw { flex:1; height:32px; border-radius:8px; }
+
+  .meta { padding:16px 20px; background:rgba(255,255,255,0.025); border-top:1px solid rgba(255,255,255,0.05); }
+  .meta h3 { font-size:14px; font-weight:700; color:#ddd; margin-bottom:5px; }
+  .meta p { font-size:12px; color:#888; line-height:1.55; }
+  .kw-row { display:flex; flex-wrap:wrap; gap:6px; margin-top:9px; }
+  .kw { font-size:11px; padding:3px 9px; border-radius:20px; background:rgba(255,255,255,0.05); color:#aaa; }
+</style>
+</head>
+<body>
+
+<h1>색이 너무 붉다면?</h1>
+<p class="sub">점술가 분위기는 유지하되 붉은색 강도를 낮춘 3가지 팔레트</p>
+
+<!-- A: Dark Velvet -->
+<div class="palette-card a" data-choice="a" onclick="toggleSelect(this)">
+  <div class="preview">
+    <div class="glow glow-1" style="width:200px;height:200px;top:-50px;right:-40px;"></div>
+    <div class="glow glow-2" style="width:140px;height:140px;bottom:-40px;left:-30px;"></div>
+    <span class="tag">A</span>
+    <div class="title accent">어둠 속 보라 — 다크 벨벳</div>
+    <div class="oracle">"그렇지만... 이름과 태어난 날만큼은 직접 알려주셔야 합니다."</div>
+    <div class="inp"><span class="inp-placeholder">숨기지 않아도 됩니다</span></div>
+    <div class="inp"><span class="inp-placeholder">이 세상에 태어난 날</span></div>
+    <div class="btn">운명의 문 앞에 서다</div>
+    <div style="margin-top:16px;">
+      <div class="swatches">
+        <div class="sw" style="background:#0d0a10"></div>
+        <div class="sw" style="background:#7a5090"></div>
+        <div class="sw" style="background:#4a2860"></div>
+        <div class="sw" style="background:#b08fc0"></div>
+        <div class="sw" style="background:#d4c0e0"></div>
+      </div>
+    </div>
+  </div>
+  <div class="meta">
+    <h3>다크 벨벳 퍼플</h3>
+    <p>빨간 기를 완전히 빼고 깊은 보라/자주로. 어두운 벨벳 커튼, 골동품 상자, 고요한 신비로움. 압도적이지만 차갑지 않음.</p>
+    <div class="kw-row">
+      <span class="kw">다크 퍼플</span><span class="kw">벨벳</span><span class="kw">고요</span><span class="kw">골동품</span>
+    </div>
+  </div>
+</div>
+
+<!-- B: Ink & Gold -->
+<div class="palette-card b" data-choice="b" onclick="toggleSelect(this)">
+  <div class="preview">
+    <div class="glow glow-1" style="width:200px;height:200px;top:-50px;right:-40px;"></div>
+    <div class="glow glow-2" style="width:140px;height:140px;bottom:-40px;left:-30px;"></div>
+    <span class="tag">B</span>
+    <div class="title accent">먹빛 밤과 황금 — 잉크 & 골드</div>
+    <div class="oracle">"그렇지만... 이름과 태어난 날만큼은 직접 알려주셔야 합니다."</div>
+    <div class="inp"><span class="inp-placeholder">숨기지 않아도 됩니다</span></div>
+    <div class="inp"><span class="inp-placeholder">이 세상에 태어난 날</span></div>
+    <div class="btn">운명의 문 앞에 서다</div>
+    <div style="margin-top:16px;">
+      <div class="swatches">
+        <div class="sw" style="background:#080608"></div>
+        <div class="sw" style="background:#8a6830"></div>
+        <div class="sw" style="background:#5a4010"></div>
+        <div class="sw" style="background:#b89a50"></div>
+        <div class="sw" style="background:#d4bc88"></div>
+      </div>
+    </div>
+  </div>
+  <div class="meta">
+    <h3>잉크 블랙 + 앤틱 골드</h3>
+    <p>거의 순수한 검정 위에 낡은 황금빛 강조. 오래된 마법서, 봉랍(封蠟), 가죽 제본의 느낌. 가장 고풍스럽고 무겁고 진지함.</p>
+    <div class="kw-row">
+      <span class="kw">앤틱 골드</span><span class="kw">먹빛</span><span class="kw">마법서</span><span class="kw">봉랍</span>
+    </div>
+  </div>
+</div>
+
+<!-- C: Charcoal Rose -->
+<div class="palette-card c" data-choice="c" onclick="toggleSelect(this)">
+  <div class="preview">
+    <div class="glow glow-1" style="width:200px;height:200px;top:-50px;right:-40px;"></div>
+    <div class="glow glow-2" style="width:140px;height:140px;bottom:-40px;left:-30px;"></div>
+    <span class="tag">C</span>
+    <div class="title accent">재와 장미 — 차콜 로즈</div>
+    <div class="oracle">"그렇지만... 이름과 태어난 날만큼은 직접 알려주셔야 합니다."</div>
+    <div class="inp"><span class="inp-placeholder">숨기지 않아도 됩니다</span></div>
+    <div class="inp"><span class="inp-placeholder">이 세상에 태어난 날</span></div>
+    <div class="btn">운명의 문 앞에 서다</div>
+    <div style="margin-top:16px;">
+      <div class="swatches">
+        <div class="sw" style="background:#0c0a0b"></div>
+        <div class="sw" style="background:#7a4852"></div>
+        <div class="sw" style="background:#4a2830"></div>
+        <div class="sw" style="background:#b07880"></div>
+        <div class="sw" style="background:#d0a8b0"></div>
+      </div>
+    </div>
+  </div>
+  <div class="meta">
+    <h3>차콜 + 뮤트 로즈</h3>
+    <p>기존 C안의 빨강을 탁하게 죽여 회장미(灰薔薇) 톤으로. 여전히 점술가 분위기지만 훨씬 절제되고 세련됨. 원래 C안과 가장 가까운 방향.</p>
+    <div class="kw-row">
+      <span class="kw">뮤트 로즈</span><span class="kw">차콜</span><span class="kw">절제</span><span class="kw">세련</span>
+    </div>
+  </div>
+</div>
+
+<script>
+function toggleSelect(el) {
+  document.querySelectorAll('.palette-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  if (window.__companion) window.__companion.select(el.dataset.choice, el.querySelector('h3').textContent);
+}
+</script>
+</body>
+</html>

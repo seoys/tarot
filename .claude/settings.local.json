@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(/Users/ysseo/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.7/skills/brainstorming/scripts/start-server.sh:*)",
+      "Bash(pnpm typecheck:*)",
+      "Bash(git -C /Volumes/extend/projects/tarot add src/app/globals.css)",
+      "Bash(git -C /Volumes/extend/projects/tarot commit -m \"style: 컬러 팔레트를 다크 벨벳 퍼플로 교체\")",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(pnpm build:*)"
+    ]
+  }
+}
