@@ -5,64 +5,54 @@
 @layer base {
   :root {
     color-scheme: dark;
-    /* Fast/Smooth dark slate for mystical theme */
-    --background: 240 10% 3.9%;
-    /* Deep Slate Black */
-    --foreground: 0 0% 98%;
-    /* Pure White */
-    --card: 240 10% 6.9%;
-    /* Dark Slate Card */
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 6.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 270 60% 50%;
-    /* Mystical Violet */
-    --primary-foreground: 210 40% 98%;
-    --secondary: 190 60% 55%;
-    /* Glowing Cyan */
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 240 10% 15%;
-    /* Lighter Slate Muted */
-    --muted-foreground: 240 5% 65%;
-    --accent: 270 40% 25%;
-    /* Dark Violet Accent */
-    --accent-foreground: 0 0% 98%;
+    --background: 270 20% 5%;
+    --foreground: 280 25% 87%;
+    --card: 270 18% 8%;
+    --card-foreground: 280 25% 87%;
+    --popover: 270 18% 8%;
+    --popover-foreground: 280 25% 87%;
+    --primary: 270 35% 42%;
+    --primary-foreground: 280 30% 92%;
+    --secondary: 270 30% 27%;
+    --secondary-foreground: 280 25% 87%;
+    --muted: 270 15% 13%;
+    --muted-foreground: 270 10% 57%;
+    --accent: 270 25% 20%;
+    --accent-foreground: 280 25% 87%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 10% 15%;
-    --input: 240 10% 15%;
-    --ring: 270 60% 50%;
-    /* Violet Focus Ring */
+    --border: 270 15% 14%;
+    --input: 270 15% 14%;
+    --ring: 270 35% 42%;
     --radius: 0.75rem;
 
-    --chart-1: 270 60% 50%;
-    --chart-2: 190 60% 55%;
+    --chart-1: 270 35% 42%;
+    --chart-2: 280 30% 60%;
     --chart-3: 48 91% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --chart-4: 280 40% 55%;
+    --chart-5: 300 35% 50%;
   }
 
-  /* We force dark mode globally for Tarot theme */
   .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 6.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 6.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 270 60% 50%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 190 60% 55%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 240 10% 15%;
-    --muted-foreground: 240 5% 65%;
-    --accent: 270 40% 25%;
-    --accent-foreground: 0 0% 98%;
+    --background: 270 20% 5%;
+    --foreground: 280 25% 87%;
+    --card: 270 18% 8%;
+    --card-foreground: 280 25% 87%;
+    --popover: 270 18% 8%;
+    --popover-foreground: 280 25% 87%;
+    --primary: 270 35% 42%;
+    --primary-foreground: 280 30% 92%;
+    --secondary: 270 30% 27%;
+    --secondary-foreground: 280 25% 87%;
+    --muted: 270 15% 13%;
+    --muted-foreground: 270 10% 57%;
+    --accent: 270 25% 20%;
+    --accent-foreground: 280 25% 87%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 10% 15%;
-    --input: 240 10% 15%;
-    --ring: 270 60% 50%;
+    --border: 270 15% 14%;
+    --input: 270 15% 14%;
+    --ring: 270 35% 42%;
   }
 }
 
