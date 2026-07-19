@@ -50,12 +50,12 @@ export function MbtiQuizStep({ onComplete }: MbtiQuizStepProps) {
     const progress = ((currentIdx + 1) / mbtiQuestions.length) * 100;
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-[70vh] px-4">
+        <div className="flex flex-col items-center justify-center min-h-[64vh] sm:min-h-[70vh] px-3 sm:px-4">
             {/* Progress Bar */}
             <div className="w-full max-w-md mb-8">
-                <div className="flex justify-between text-xs text-primary/70 mb-2 px-1 font-medium tracking-[0.2em] uppercase">
+                <div className="flex justify-between text-xs text-primary/75 mb-2 px-1 font-medium">
                     <span>Q{currentIdx + 1}</span>
-                    <span>당신의 본질을 읽는 중...</span>
+                    <span>읽는 중...</span>
                 </div>
                 <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
                     <div
@@ -70,26 +70,26 @@ export function MbtiQuizStep({ onComplete }: MbtiQuizStepProps) {
                 isTransitioning ? "opacity-0 translate-y-4 scale-95" : "opacity-100 translate-y-0 scale-100"
             )}>
                 {/* Question Card */}
-                <div className="bg-white/[0.04] backdrop-blur-2xl border border-white/10 rounded-[2rem] p-8 md:p-10 shadow-[0_24px_70px_-35px_rgba(168,145,255,0.35)] relative overflow-hidden flex flex-col items-center text-center">
+                <div className="bg-white/[0.04] backdrop-blur-2xl border border-white/10 rounded-[1.75rem] sm:rounded-[2rem] p-6 sm:p-8 md:p-10 shadow-[0_24px_70px_-35px_rgba(168,145,255,0.35)] relative overflow-hidden flex flex-col items-center text-center">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-primary/15 rounded-full blur-[60px] -mr-16 -mt-16 pointer-events-none" />
 
-                    <p className="text-xs text-primary/60 uppercase tracking-widest mb-3">점술가가 묻습니다</p>
-                    <h3 className="text-xl md:text-2xl font-serif text-primary-foreground mb-8 leading-relaxed">
+                    <p className="text-xs text-primary/70 mb-3">질문</p>
+                    <h3 className="text-lg sm:text-xl md:text-2xl font-serif text-primary-foreground mb-6 sm:mb-8 leading-[1.75]">
                         {currentQ.text}
                     </h3>
 
-                    <div className="flex flex-col gap-4 w-full">
+                    <div className="flex flex-col gap-3 sm:gap-4 w-full">
                         <button
                             onClick={() => handleSelect(currentQ.optionA.value)}
-                            className="w-full text-left bg-background/55 hover:bg-white/10 border border-white/10 hover:border-primary/30 text-foreground p-5 rounded-2xl transition-all duration-300 hover:shadow-[0_12px_30px_-20px_rgba(168,145,255,0.6)] hover:-translate-y-0.5"
+                            className="w-full text-left bg-background/55 hover:bg-white/10 border border-white/10 hover:border-primary/30 text-foreground p-4 sm:p-5 rounded-2xl transition-all duration-300 hover:shadow-[0_12px_30px_-20px_rgba(168,145,255,0.6)] hover:-translate-y-0.5"
                         >
-                            <p className="text-sm md:text-base">{currentQ.optionA.text}</p>
+                            <p className="text-sm sm:text-base leading-relaxed">{currentQ.optionA.text}</p>
                         </button>
                         <button
                             onClick={() => handleSelect(currentQ.optionB.value)}
-                            className="w-full text-left bg-background/55 hover:bg-white/10 border border-white/10 hover:border-primary/30 text-foreground p-5 rounded-2xl transition-all duration-300 hover:shadow-[0_12px_30px_-20px_rgba(168,145,255,0.6)] hover:-translate-y-0.5"
+                            className="w-full text-left bg-background/55 hover:bg-white/10 border border-white/10 hover:border-primary/30 text-foreground p-4 sm:p-5 rounded-2xl transition-all duration-300 hover:shadow-[0_12px_30px_-20px_rgba(168,145,255,0.6)] hover:-translate-y-0.5"
                         >
-                            <p className="text-sm md:text-base">{currentQ.optionB.text}</p>
+                            <p className="text-sm sm:text-base leading-relaxed">{currentQ.optionB.text}</p>
                         </button>
                     </div>
                 </div>

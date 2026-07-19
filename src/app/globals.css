@@ -6,19 +6,19 @@
   :root {
     color-scheme: dark;
     --background: 228 35% 7%;
-    --foreground: 250 35% 93%;
+    --foreground: 250 32% 96%;
     --card: 231 28% 11%;
-    --card-foreground: 250 35% 93%;
+    --card-foreground: 250 32% 96%;
     --popover: 231 28% 11%;
-    --popover-foreground: 250 35% 93%;
+    --popover-foreground: 250 32% 96%;
     --primary: 259 42% 66%;
     --primary-foreground: 232 38% 11%;
     --secondary: 335 34% 66%;
     --secondary-foreground: 232 38% 11%;
     --muted: 230 24% 16%;
-    --muted-foreground: 248 18% 68%;
+    --muted-foreground: 248 16% 74%;
     --accent: 223 22% 20%;
-    --accent-foreground: 250 35% 93%;
+    --accent-foreground: 250 32% 96%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
     --border: 233 24% 18%;
@@ -35,19 +35,19 @@
 
   .dark {
     --background: 228 35% 7%;
-    --foreground: 250 35% 93%;
+    --foreground: 250 32% 96%;
     --card: 231 28% 11%;
-    --card-foreground: 250 35% 93%;
+    --card-foreground: 250 32% 96%;
     --popover: 231 28% 11%;
-    --popover-foreground: 250 35% 93%;
+    --popover-foreground: 250 32% 96%;
     --primary: 259 42% 66%;
     --primary-foreground: 232 38% 11%;
     --secondary: 335 34% 66%;
     --secondary-foreground: 232 38% 11%;
     --muted: 230 24% 16%;
-    --muted-foreground: 248 18% 68%;
+    --muted-foreground: 248 16% 74%;
     --accent: 223 22% 20%;
-    --accent-foreground: 250 35% 93%;
+    --accent-foreground: 250 32% 96%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
     --border: 233 24% 18%;
@@ -70,6 +70,7 @@
 
   body {
     @apply bg-background text-foreground;
+    line-height: 1.7;
     background:
       radial-gradient(circle at top, hsl(var(--primary) / 0.12), transparent 34%),
       radial-gradient(circle at bottom right, hsl(var(--secondary) / 0.08), transparent 28%),

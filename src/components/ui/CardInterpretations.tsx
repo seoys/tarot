@@ -16,14 +16,14 @@ import { UserInfo } from "@/types/user-journey";
 export function highlightOutput(text: string) {
     let processed = text
         // Headers (H2 and H3)
-        .replace(/^##\s+(.*)/gm, '<h2 class="text-2xl font-serif font-bold text-primary mt-8 mb-4 pb-2 border-b border-primary/20">$1</h2>')
+        .replace(/^##\s+(.*)/gm, '<h2 class="text-2xl font-serif font-bold text-primary-foreground mt-8 mb-4 pb-2 border-b border-white/10">$1</h2>')
         .replace(/^###\s+(.*)/gm, '<h3 class="text-xl font-bold text-primary-foreground mt-6 mb-3">$1</h3>')
         // Bold text
-        .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-primary/90 text-[1.05em]">$1</strong>')
+        .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-primary-foreground text-[1.03em]">$1</strong>')
         // Italic text
-        .replace(/\*(.*?)\*/g, '<em class="italic text-muted-foreground">$1</em>')
+        .replace(/\*(.*?)\*/g, '<em class="not-italic text-muted-foreground">$1</em>')
         // Bullet points
-        .replace(/^-\s+(.*)/gm, '<li class="ml-2 mb-2 relative pl-2 before:content-[\'•\'] before:absolute before:-left-3 before:text-primary block">$1</li>')
+        .replace(/^-\s+(.*)/gm, '<li class="ml-2 mb-2 relative pl-2 before:content-[\'•\'] before:absolute before:-left-3 before:text-primary block leading-relaxed">$1</li>')
         // Convert remaining newlines to breaks
         .replace(/\n/g, "<br />")
         // Fix `<br />` following block elements
@@ -33,7 +33,7 @@ export function highlightOutput(text: string) {
         // Clean up excessive breaks
         .replace(/(<br \/>){3,}/g, "<br /><br />");
 
-    return <div dangerouslySetInnerHTML={{ __html: processed }} className="prose prose-invert prose-p:leading-relaxed max-w-none space-y-2" />;
+    return <div dangerouslySetInnerHTML={{ __html: processed }} className="prose prose-invert prose-p:leading-relaxed prose-p:text-[16px] prose-p:text-foreground/95 max-w-none space-y-2" />;
 }
 
 interface CardInterpretationsProps {
@@ -103,8 +103,8 @@ export function CardInterpretations({
             {cardInterpretations.TarotCardData &&
                 cardInterpretations.TarotCardData.length > 0 && (
                     <div className="mt-8 w-full max-w-4xl p-6 bg-white/[0.04] backdrop-blur-2xl rounded-[2rem] shadow-[0_24px_70px_-35px_rgba(168,145,255,0.35)] relative z-10 border border-white/10">
-                        <h2 className="text-3xl font-semibold mb-6 text-center text-primary-foreground font-serif italic">
-                            선택된 카드들
+                        <h2 className="text-3xl font-semibold mb-6 text-center text-primary-foreground font-serif">
+                            카드 요약
                         </h2>
                         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
                             {cardInterpretations.TarotCardData.map((card: any, index: number) => {
@@ -126,12 +126,12 @@ export function CardInterpretations({
                                             />
                                         </div>
                                         <div className="text-center w-full">
-                                            <h3 className="text-base font-semibold text-primary truncate w-full">
+                                            <h3 className="text-base font-semibold text-primary-foreground truncate w-full">
                                                 {card.name}
                                             </h3>
-                                            <p className="text-xs text-muted-foreground mt-1">
-                                                {card.isReversed ? "역방향" : "정방향"}
-                                            </p>
+                                        <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                                            {card.isReversed ? "역방향" : "정방향"}
+                                        </p>
                                         </div>
                                     </div>
                                 );
@@ -153,7 +153,7 @@ export function CardInterpretations({
                             <div className="flex-none p-6 pb-4 border-b border-white/5 flex flex-col gap-3 bg-white/[0.02] z-10">
                                 <div className="flex items-center justify-between">
                                     <h3 className="text-2xl font-serif font-bold text-primary-foreground tracking-wide">
-                                        당신의 패를 읽겠습니다
+                                        해석 보기
                                     </h3>
                                     <button
                                         className="p-2 -mr-2 text-muted-foreground hover:text-foreground hover:bg-white/5 rounded-full transition-colors flex items-center justify-center"
@@ -182,7 +182,7 @@ export function CardInterpretations({
 
                             {/* Scrollable Content */}
                             <div className={`flex-1 p-6 md:p-8 scroll-smooth ${isSaving ? 'overflow-visible' : 'overflow-y-auto'}`}>
-                                <div className="text-foreground/92 text-[15px] md:text-[16px] leading-[1.9] md:leading-[2.05] tracking-wide">
+                                <div className="text-foreground/95 text-[16px] md:text-[17px] leading-[1.95] md:leading-[2.1] tracking-normal">
                                     {highlightOutput(cardInterpretations[0].output)}
                                 </div>
                             </div>
@@ -195,16 +195,16 @@ export function CardInterpretations({
                                         onClick={handleSaveImage}
                                         disabled={isSaving}
                                     >
-                                        저장하기
+                                        저장
                                     </Button>
                                     <Button
                                         className="flex-1 py-6 text-lg rounded-2xl bg-gradient-to-r from-primary via-secondary to-[#e4dcff] hover:opacity-95 text-primary-foreground shadow-[0_16px_32px_-20px_rgba(168,145,255,0.65)] transition-all hover:scale-[1.01]"
                                         onClick={() => {
-                                            handleCloseModal();
-                                            onRestart();
+                                          handleCloseModal();
+                                          onRestart();
                                         }}
                                     >
-                                        다시 운명을 마주하다
+                                        다시 보기
                                     </Button>
                                 </div>
                             )}

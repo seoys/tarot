@@ -15,8 +15,8 @@ export const LoadingIndicator = () => (
                     data-ai-hint="card loading"
                 />
             </div>
-            <p className="text-foreground text-xl sm:ml-4 font-serif italic">
-                잠시만요, 당신의 흐름을 읽고 있습니다...
+            <p className="text-foreground text-xl sm:ml-4 font-serif">
+                읽는 중...
             </p>
         </div>
     </div>

@@ -219,12 +219,19 @@ export default function Home() {
 
   // UX Helper Text Logic
   const getHelperText = () => {
-    if (isLoading) return "운명의 패를 읽고 있습니다...";
-    if (isShuffling) return "패를 섞고 있습니다...";
-    if (question.trim() === "") return "먼저 점술가에게 물음을 전하십시오.";
-    if (selectedCards.length === 0) return "운명이 이끄는 패를 집으십시오. (3장 또는 5장)";
-    if (selectedCards.length > 0) return "패가 선택됐습니다. 운명을 들여다볼 준비가 됐습니까?";
-    return "패를 섞고 물음에 집중하십시오.";
+    if (isLoading) return "읽는 중...";
+    if (isShuffling) return "섞는 중...";
+    if (question.trim() === "") return "먼저 물음을 적어주세요.";
+    if (selectedCards.length === 0) return "3장 또는 5장을 골라주세요.";
+    if (selectedCards.length > 0) return "패를 골랐습니다. 이어서 읽겠습니다.";
+    return "패를 섞고 물음을 적어주세요.";
+  };
+
+  const getFlowStage = () => {
+    if (isLoading || isAnalyzing) return "해석 확인";
+    if (selectedCards.length > 0) return "카드 선택";
+    if (question.trim().length > 0) return "물음 작성";
+    return "시작";
   };
 
   const handleBirthdateComplete = (info: Partial<UserInfo>) => {
@@ -251,7 +258,7 @@ export default function Home() {
       <div className="fixed bottom-[-12%] right-[-10%] w-[44%] h-[44%] bg-secondary/12 blur-[120px] rounded-full pointer-events-none" />
 
       {/* Funnel Router */}
-      <div className="w-full max-w-7xl relative z-10 flex flex-col items-center">
+      <div className="w-full max-w-7xl relative z-10 flex flex-col items-center px-2 sm:px-0">
 
         {step === 'birth' && (
           <BirthdateStep onComplete={handleBirthdateComplete} />
@@ -264,13 +271,31 @@ export default function Home() {
         {step === 'tarot' && (
           <div className="w-full flex flex-col items-center animate-in fade-in zoom-in-95 duration-700">
             {/* Title Section */}
-            <div className="text-center mb-12 relative px-4">
-              <h1 className="text-5xl md:text-7xl font-serif tracking-tight text-primary-foreground drop-shadow-[0_0_24px_rgba(168,145,255,0.35)] mb-4">
+            <div className="text-center mb-8 sm:mb-12 relative px-2 sm:px-4 max-w-2xl">
+              <h1 className="text-4xl sm:text-5xl md:text-7xl font-serif tracking-tight text-primary-foreground drop-shadow-[0_0_24px_rgba(168,145,255,0.35)] mb-3 sm:mb-4">
                 Tarotal
               </h1>
-              <p className="text-lg md:text-xl text-muted-foreground font-light max-w-xl mx-auto leading-relaxed">
-                {userInfo.mbti}의 내면을 꿰뚫는 5장의 패를 집으십시오. 이미 무엇을 원하는지 알고 있습니다.
+              <p className="text-base sm:text-lg md:text-xl text-muted-foreground font-light max-w-lg sm:max-w-xl mx-auto leading-relaxed px-2 sm:px-0">
+                {userInfo.mbti}의 흐름을 읽고 5장의 패를 고르십시오.
               </p>
+            </div>
+
+            <div className="w-full max-w-md mb-5 sm:mb-6 px-2 sm:px-0">
+              <div className="flex items-center justify-between gap-3 rounded-full border border-white/10 bg-white/[0.04] px-4 py-3 text-xs sm:text-sm text-muted-foreground backdrop-blur-md">
+                <span className="font-medium text-primary-foreground">현재 단계</span>
+                <span>{getFlowStage()}</span>
+              </div>
+              <div className="mt-3 grid grid-cols-3 gap-2 text-[11px] sm:text-xs text-center">
+                <div className={`rounded-full border px-3 py-2 ${selectedCards.length === 0 && !isShuffling && !isLoading ? "border-primary/40 bg-primary/10 text-primary-foreground" : "border-white/10 bg-white/[0.03] text-muted-foreground"}`}>
+                  1 질문
+                </div>
+                <div className={`rounded-full border px-3 py-2 ${selectedCards.length > 0 ? "border-primary/40 bg-primary/10 text-primary-foreground" : "border-white/10 bg-white/[0.03] text-muted-foreground"}`}>
+                  2 카드 선택
+                </div>
+                <div className={`rounded-full border px-3 py-2 ${(isLoading || isAnalyzing) ? "border-primary/40 bg-primary/10 text-primary-foreground" : "border-white/10 bg-white/[0.03] text-muted-foreground"}`}>
+                  3 해석 확인
+                </div>
+              </div>
             </div>
 
             {/* Question Input */}
@@ -283,17 +308,23 @@ export default function Home() {
               />
             )}
 
+            {!isAnalysisComplete && (
+              <p className="mb-4 sm:mb-5 text-center text-sm text-muted-foreground px-4 max-w-md leading-relaxed">
+                {getHelperText()}
+              </p>
+            )}
+
             {/* Controls */}
             {!isAnalysisComplete && selectedCards.length === 0 && (
-              <div className="mb-12">
+              <div className="mb-8 sm:mb-12">
                 <Button
                   onClick={shuffleCards}
                   disabled={isShuffling}
                   variant="outline"
                   size="lg"
-                  className="bg-transparent border-primary text-primary hover:bg-primary hover:text-primary-foreground rounded-full px-8 py-6 text-lg tracking-wider transition-all duration-300 hover:shadow-[0_0_20px_rgba(139,92,246,0.4)] hover:scale-105 active:scale-95"
+                  className="bg-transparent border-primary text-primary hover:bg-primary hover:text-primary-foreground rounded-full px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg tracking-wider transition-all duration-300 hover:shadow-[0_0_20px_rgba(139,92,246,0.4)] hover:scale-[1.02] active:scale-95"
                 >
-                  {isShuffling ? "패를 섞는 중..." : "패를 섞다"}
+                  {isShuffling ? "섞는 중..." : "패 섞기"}
                 </Button>
               </div>
             )}
