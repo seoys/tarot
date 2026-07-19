@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { UserInfo } from "@/types/user-journey";
-import { mbtiQuestions } from "@/lib/mbti-data";
+import { mbtiQuestionPool } from "@/lib/mbti-data";
 import { cn } from "@/lib/utils";
 
 interface MbtiQuizStepProps {
@@ -20,6 +20,20 @@ export function MbtiQuizStep({ onComplete }: MbtiQuizStepProps) {
 
     const [isTransitioning, setIsTransitioning] = useState(false);
 
+    const questions = useMemo(() => {
+        const pickRandom = <T,>(items: T[], count: number) => {
+            const shuffled = [...items].sort(() => Math.random() - 0.5);
+            return shuffled.slice(0, count);
+        };
+
+        return [
+            ...pickRandom(mbtiQuestionPool["E-I"], 1),
+            ...pickRandom(mbtiQuestionPool["S-N"], 1),
+            ...pickRandom(mbtiQuestionPool["T-F"], 1),
+            ...pickRandom(mbtiQuestionPool["J-P"], 1),
+        ];
+    }, []);
+
     const handleSelect = (value: string) => {
         if (isTransitioning) return;
 
@@ -29,7 +43,7 @@ export function MbtiQuizStep({ onComplete }: MbtiQuizStepProps) {
         setIsTransitioning(true);
 
         setTimeout(() => {
-            if (currentIdx < mbtiQuestions.length - 1) {
+            if (currentIdx < questions.length - 1) {
                 setCurrentIdx(currentIdx + 1);
                 setIsTransitioning(false);
             } else {
@@ -46,8 +60,8 @@ export function MbtiQuizStep({ onComplete }: MbtiQuizStepProps) {
         }, 500); // Wait 500ms for smooth exit animation
     };
 
-    const currentQ = mbtiQuestions[currentIdx];
-    const progress = ((currentIdx + 1) / mbtiQuestions.length) * 100;
+    const currentQ = questions[currentIdx];
+    const progress = ((currentIdx + 1) / questions.length) * 100;
 
     return (
         <div className="flex flex-col items-center justify-center min-h-[64vh] sm:min-h-[70vh] px-3 sm:px-4">
