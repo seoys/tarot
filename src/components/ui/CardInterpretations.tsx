@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import Image from "next/image";
 import { toPng } from "html-to-image";
+import { layoutWithLines, prepareWithSegments } from "@chenglou/pretext";
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -132,6 +133,8 @@ export function CardInterpretations({
     const modalRef = useRef<HTMLDivElement>(null);
     const [isSaving, setIsSaving] = useState(false);
     const [showDetails, setShowDetails] = useState(false);
+    const [modalWidth, setModalWidth] = useState(0);
+    const [openingLines, setOpeningLines] = useState<string[]>([]);
 
     React.useEffect(() => {
         if (!isOutputModalOpen) {
@@ -143,7 +146,56 @@ export function CardInterpretations({
         return () => window.clearTimeout(timeoutId);
     }, [isOutputModalOpen]);
 
+    React.useEffect(() => {
+        if (!isOutputModalOpen) {
+            setModalWidth(0);
+            return;
+        }
+
+        const updateModalWidth = () => {
+            setModalWidth(Math.max(280, Math.min(window.innerWidth - 48, 640)));
+        };
+
+        updateModalWidth();
+        window.addEventListener("resize", updateModalWidth);
+
+        return () => window.removeEventListener("resize", updateModalWidth);
+    }, [isOutputModalOpen]);
+
+    React.useEffect(() => {
+        if (!isOutputModalOpen) {
+            setOpeningLines([]);
+            return;
+        }
+
+        const openingText =
+            cardInterpretations?.[0]?.output?.split("\n").find((line: string) => line.trim()) ??
+            "결과를 읽고 있습니다.";
+
+        if (!modalWidth) return;
+
+        try {
+            const prepared = prepareWithSegments(
+                openingText,
+                '600 20px "Playfair Display", Georgia, serif',
+            );
+            const layout = layoutWithLines(
+                prepared,
+                Math.max(240, modalWidth - 64),
+                30,
+            );
+
+            setOpeningLines(layout.lines.slice(0, 4).map((line) => line.text.trim()));
+        } catch {
+            setOpeningLines([openingText]);
+        }
+    }, [cardInterpretations, isOutputModalOpen, modalWidth]);
+
     if (!cardInterpretations) return null;
+
+    const openingText =
+        cardInterpretations?.[0]?.output?.split("\n").find((line: string) => line.trim()) ??
+        "결과를 읽고 있습니다.";
 
     const handleCloseModal = () => {
         setIsOutputModalOpen(false);
@@ -187,10 +239,10 @@ export function CardInterpretations({
             {cardInterpretations.TarotCardData &&
                 cardInterpretations.TarotCardData.length > 0 && (
                     <div className="mt-8 w-full max-w-4xl p-6 bg-white/[0.04] backdrop-blur-2xl rounded-[2rem] shadow-[0_24px_70px_-35px_rgba(168,145,255,0.35)] relative z-10 border border-white/10">
-                        <h2 className="text-3xl font-semibold mb-6 text-center text-primary-foreground font-serif">
+                        <h2 className="text-3xl font-semibold mb-6 text-center text-primary-foreground font-serif animate-in fade-in duration-500">
                             카드 요약
                         </h2>
-                        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 animate-in fade-in slide-in-from-bottom-3 duration-700">
                             {cardInterpretations.TarotCardData.map((card: any, index: number) => {
                                 const displayCard = tarotCardsData.find(
                                     (dc) => dc.name === card.name
@@ -198,7 +250,8 @@ export function CardInterpretations({
                                 return (
                                     <div
                                         key={index}
-                                        className="bg-card/70 backdrop-blur-sm border border-white/10 rounded-[1.25rem] overflow-hidden shadow-lg transform hover:-translate-y-1 transition-all duration-300 flex flex-col items-center p-4"
+                                        className="bg-card/70 backdrop-blur-sm border border-white/10 rounded-[1.25rem] overflow-hidden shadow-lg transform hover:-translate-y-1 hover:scale-[1.02] transition-all duration-300 flex flex-col items-center p-4 animate-in fade-in zoom-in-95"
+                                        style={{ animationDelay: `${index * 90}ms` }}
                                     >
                                         <div className="relative w-24 h-36 mb-4 shadow-md rounded-lg overflow-hidden ring-1 ring-white/10">
                                             <Image
@@ -227,10 +280,10 @@ export function CardInterpretations({
             {Array.isArray(cardInterpretations) &&
                 cardInterpretations[0]?.output &&
                 isOutputModalOpen && (
-                    <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4 bg-background/75 backdrop-blur-md animate-in fade-in duration-500">
+                    <div className="fixed inset-0 z-[5000] flex items-stretch justify-center p-2 sm:items-center sm:p-4 bg-background/75 backdrop-blur-md animate-in fade-in duration-500">
                         <div
                             ref={modalRef}
-                            className={`relative bg-[linear-gradient(180deg,rgba(17,23,42,0.98)_0%,rgba(23,30,54,0.98)_100%)] border border-white/10 rounded-[2rem] shadow-[0_24px_80px_-35px_rgba(168,145,255,0.5)] w-full max-w-2xl flex flex-col animate-in zoom-in-95 slide-in-from-bottom-4 duration-500 ${isSaving ? 'h-auto max-h-none overflow-visible' : 'max-h-[85vh] overflow-hidden'}`}
+                            className={`relative bg-[linear-gradient(180deg,rgba(17,23,42,0.98)_0%,rgba(23,30,54,0.98)_100%)] border border-white/10 rounded-[1.5rem] sm:rounded-[2rem] shadow-[0_24px_80px_-35px_rgba(168,145,255,0.5)] w-full max-w-2xl h-[calc(100dvh-1rem)] sm:h-auto flex flex-col animate-in zoom-in-95 slide-in-from-bottom-4 duration-500 ${isSaving ? 'h-auto max-h-none overflow-visible' : 'sm:max-h-[85vh] overflow-hidden'}`}
                         >
 
                             {/* Header sticky area */}
@@ -272,17 +325,79 @@ export function CardInterpretations({
                                 )}
                             </div>
 
+                            <div className="flex-none px-4 sm:px-6 pt-4 sm:pt-6">
+                                <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[radial-gradient(circle_at_top_left,rgba(168,145,255,0.24),transparent_42%),linear-gradient(180deg,rgba(20,26,47,0.98)_0%,rgba(15,20,38,0.98)_100%)] px-5 py-5 sm:px-6 sm:py-6 shadow-[0_24px_50px_-28px_rgba(168,145,255,0.5)] animate-in fade-in slide-in-from-bottom-4 duration-700">
+                                    <div className="absolute inset-0 opacity-80 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.15),transparent_28%),radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.07),transparent_24%)]" />
+                                    <div className="relative flex flex-col gap-5 sm:gap-6 md:grid md:grid-cols-[1.4fr_0.9fr] md:items-end">
+                                        <div className="space-y-4">
+                                            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] uppercase tracking-[0.35em] text-primary/90 animate-in fade-in duration-500">
+                                                moonlit opening
+                                            </div>
+                                            <div>
+                                                <p className="text-xs sm:text-sm uppercase tracking-[0.45em] text-muted-foreground animate-in fade-in slide-in-from-bottom-1 duration-500">
+                                                    오늘의 첫 숨결
+                                                </p>
+                                                <h4 className="mt-2 text-3xl sm:text-4xl md:text-5xl font-serif font-bold leading-[1.06] text-primary-foreground drop-shadow-[0_10px_30px_rgba(168,145,255,0.22)] animate-in fade-in slide-in-from-bottom-2 duration-700">
+                                                    카드가 먼저 속삭이는
+                                                    <span className="block text-primary/95">가장 조용한 진실</span>
+                                                </h4>
+                                            </div>
+                                            <div className="space-y-2 text-[15px] sm:text-[17px] leading-[1.95] text-foreground/92">
+                                                {openingLines.length > 0 ? (
+                                                    openingLines.map((line, index) => (
+                                                        <div
+                                                            key={`${line}-${index}`}
+                                                            className="rounded-2xl border border-white/8 bg-white/[0.04] px-4 py-3 shadow-[0_12px_30px_-24px_rgba(168,145,255,0.45)] animate-in fade-in slide-in-from-bottom-2 duration-500"
+                                                            style={{ animationDelay: `${180 + index * 110}ms` }}
+                                                        >
+                                                            {line}
+                                                        </div>
+                                                    ))
+                                                ) : (
+                                                    <div className="rounded-2xl border border-white/8 bg-white/[0.04] px-4 py-3 text-foreground/80">
+                                                        {openingText}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-1 animate-in fade-in slide-in-from-bottom-2 duration-700" style={{ animationDelay: "180ms" }}>
+                                            <div className="rounded-[1.5rem] border border-white/10 bg-white/[0.05] p-4 backdrop-blur-sm transition-transform duration-300 hover:-translate-y-0.5">
+                                                <p className="text-[10px] uppercase tracking-[0.35em] text-primary/80">분위기</p>
+                                                <p className="mt-2 text-base sm:text-lg font-medium text-primary-foreground">
+                                                    문라이트 젠 리딩
+                                                </p>
+                                                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                                                    부드러운 흐름 속에서 핵심만 또렷하게 정리합니다.
+                                                </p>
+                                            </div>
+                                            {userInfo && (
+                                                <div className="rounded-[1.5rem] border border-white/10 bg-white/[0.05] p-4 backdrop-blur-sm transition-transform duration-300 hover:-translate-y-0.5">
+                                                    <p className="text-[10px] uppercase tracking-[0.35em] text-primary/80">리더</p>
+                                                    <p className="mt-2 text-base sm:text-lg font-medium text-primary-foreground">
+                                                        {userInfo.name}님
+                                                    </p>
+                                                    <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                                                        {userInfo.mbti}의 관점으로 카드를 풀어갑니다.
+                                                    </p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             {/* Scrollable Content */}
-                            <div className={`flex-1 p-5 sm:p-6 md:p-8 scroll-smooth ${isSaving ? 'overflow-visible' : 'overflow-y-auto'}`}>
+                            <div className={`flex-1 p-4 sm:p-6 md:p-8 scroll-smooth ${isSaving ? 'overflow-visible' : 'overflow-y-auto'}`}>
                                 <div className="space-y-4 sm:space-y-5">
-                                    <div className="rounded-[1.5rem] border border-white/10 bg-white/[0.06] px-4 py-5 text-foreground/95 shadow-[0_20px_40px_-28px_rgba(168,145,255,0.45)]">
+                                    <div className="rounded-[1.5rem] border border-white/10 bg-white/[0.06] px-4 py-5 text-foreground/95 shadow-[0_20px_40px_-28px_rgba(168,145,255,0.45)] animate-in fade-in slide-in-from-bottom-2 duration-500" style={{ animationDelay: "120ms" }}>
                                         <p className="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-primary/80 mb-2">한 줄 요약</p>
                                         <p className="text-base sm:text-lg md:text-lg leading-relaxed font-semibold">
-                                            {cardInterpretations[0]?.output?.split("\n").find((line: string) => line.trim()) ?? "결과를 읽고 있습니다."}
+                                            {openingText}
                                         </p>
                                     </div>
                                     {showDetails && (
-                                        <div className="text-foreground/95 text-[16px] md:text-[17px] leading-[1.95] md:leading-[2.1] tracking-normal animate-in fade-in duration-300">
+                                        <div className="text-foreground/95 text-[16px] md:text-[17px] leading-[1.95] md:leading-[2.1] tracking-normal animate-in fade-in slide-in-from-bottom-2 duration-300">
                                             {highlightOutput(cardInterpretations[0].output)}
                                         </div>
                                     )}
