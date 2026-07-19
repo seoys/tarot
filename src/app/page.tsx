@@ -62,6 +62,7 @@ export default function Home() {
   // Tarot Question State
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisPhaseIndex, setAnalysisPhaseIndex] = useState(0);
   const [readings, setReadings] = useState<
     {
       card: { name: string; isReversed: boolean };
@@ -118,6 +119,17 @@ export default function Home() {
   useEffect(() => {
     handleShuffle(); // Initial shuffle when component mounts
   }, [handleShuffle]);
+
+  useEffect(() => {
+    if (!isAnalyzing) return;
+
+    setAnalysisPhaseIndex(0);
+    const intervalId = window.setInterval(() => {
+      setAnalysisPhaseIndex((current) => (current + 1) % 3);
+    }, 1200);
+
+    return () => window.clearInterval(intervalId);
+  }, [isAnalyzing]);
 
   const toggleCardSelection = (cardName: string) => {
     if (isLoading || isShuffling) return;
@@ -332,7 +344,7 @@ export default function Home() {
             {/* Loading Indicator */}
             {isAnalyzing && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/78 backdrop-blur-md animate-in fade-in duration-300">
-                  <LoadingIndicator />
+                  <LoadingIndicator phaseIndex={analysisPhaseIndex} />
                 </div>
               )}
 

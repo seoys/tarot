@@ -131,6 +131,17 @@ export function CardInterpretations({
 }: CardInterpretationsProps) {
     const modalRef = useRef<HTMLDivElement>(null);
     const [isSaving, setIsSaving] = useState(false);
+    const [showDetails, setShowDetails] = useState(false);
+
+    React.useEffect(() => {
+        if (!isOutputModalOpen) {
+            setShowDetails(false);
+            return;
+        }
+
+        const timeoutId = window.setTimeout(() => setShowDetails(true), 500);
+        return () => window.clearTimeout(timeoutId);
+    }, [isOutputModalOpen]);
 
     if (!cardInterpretations) return null;
 
@@ -139,6 +150,7 @@ export function CardInterpretations({
         setSelectedCards([]);
         clearInterpretations();
         setQuestion("");
+        setShowDetails(false);
     };
 
     const handleSaveImage = async () => {
@@ -222,9 +234,9 @@ export function CardInterpretations({
                         >
 
                             {/* Header sticky area */}
-                            <div className="flex-none p-6 pb-4 border-b border-white/5 flex flex-col gap-3 bg-white/[0.02] z-10">
+                            <div className="flex-none p-5 sm:p-6 pb-4 border-b border-white/5 flex flex-col gap-3 bg-white/[0.02] z-10">
                                 <div className="flex items-center justify-between">
-                                    <h3 className="text-2xl font-serif font-bold text-primary-foreground tracking-wide">
+                                    <h3 className="text-xl sm:text-2xl font-serif font-bold text-primary-foreground tracking-wide">
                                         해석 보기
                                     </h3>
                                     <button
@@ -251,7 +263,7 @@ export function CardInterpretations({
                                     </div>
                                 )}
                                 {getMbtiReadingNote(userInfo?.mbti) && (
-                                    <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm leading-relaxed text-foreground/90">
+                                    <div className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-4 text-sm leading-relaxed text-foreground/90 shadow-[0_16px_32px_-24px_rgba(168,145,255,0.45)]">
                                         <div className="font-medium text-primary-foreground mb-1">
                                             {getMbtiReadingNote(userInfo?.mbti)?.title}
                                         </div>
@@ -261,9 +273,19 @@ export function CardInterpretations({
                             </div>
 
                             {/* Scrollable Content */}
-                            <div className={`flex-1 p-6 md:p-8 scroll-smooth ${isSaving ? 'overflow-visible' : 'overflow-y-auto'}`}>
-                                <div className="text-foreground/95 text-[16px] md:text-[17px] leading-[1.95] md:leading-[2.1] tracking-normal">
-                                    {highlightOutput(cardInterpretations[0].output)}
+                            <div className={`flex-1 p-5 sm:p-6 md:p-8 scroll-smooth ${isSaving ? 'overflow-visible' : 'overflow-y-auto'}`}>
+                                <div className="space-y-4 sm:space-y-5">
+                                    <div className="rounded-[1.5rem] border border-white/10 bg-white/[0.06] px-4 py-5 text-foreground/95 shadow-[0_20px_40px_-28px_rgba(168,145,255,0.45)]">
+                                        <p className="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-primary/80 mb-2">한 줄 요약</p>
+                                        <p className="text-base sm:text-lg md:text-lg leading-relaxed font-semibold">
+                                            {cardInterpretations[0]?.output?.split("\n").find((line: string) => line.trim()) ?? "결과를 읽고 있습니다."}
+                                        </p>
+                                    </div>
+                                    {showDetails && (
+                                        <div className="text-foreground/95 text-[16px] md:text-[17px] leading-[1.95] md:leading-[2.1] tracking-normal animate-in fade-in duration-300">
+                                            {highlightOutput(cardInterpretations[0].output)}
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 
