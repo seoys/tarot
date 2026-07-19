@@ -25,7 +25,7 @@ export function PreviewCardDialog({
 
     return (
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-sm border-primary/20 bg-card/95 backdrop-blur-md text-foreground shadow-[0_0_40px_-10px_rgba(139,92,246,0.3)]">
+            <DialogContent className="max-w-sm border-white/10 bg-card/96 backdrop-blur-2xl text-foreground shadow-[0_24px_60px_-30px_rgba(168,145,255,0.45)] rounded-[2rem]">
                 <DialogHeader className="mb-2">
                     <DialogTitle className="font-serif text-2xl text-center text-primary-foreground tracking-wide">
                         {card.name}
@@ -36,7 +36,7 @@ export function PreviewCardDialog({
                 </DialogHeader>
 
                 <div className="flex flex-col items-center justify-center py-4">
-                    <div className="relative w-48 h-72 rounded-xl overflow-hidden shadow-2xl border border-white/10 ring-2 ring-primary/20">
+                    <div className="relative w-48 h-72 rounded-[1.5rem] overflow-hidden shadow-2xl border border-white/10 ring-1 ring-white/10">
                         <Image
                             src={card.imageUrl}
                             alt={card.name}
@@ -50,7 +50,7 @@ export function PreviewCardDialog({
                 <DialogFooter className="flex justify-center mt-4">
                     <Button
                         onClick={() => onOpenChange(false)}
-                        className="w-full bg-primary hover:bg-primary/80 text-primary-foreground shadow-[0_0_20px_-5px_var(--primary)]"
+                        className="w-full bg-gradient-to-r from-primary via-secondary to-[#e4dcff] hover:opacity-95 text-primary-foreground shadow-[0_16px_32px_-20px_rgba(168,145,255,0.65)] rounded-2xl"
                     >
                         알겠습니다
                     </Button>

@@ -28,10 +28,10 @@ export function SelectedCardsSlots({
                         <div
                             key={index}
                             className={cn(
-                                "relative w-16 h-24 sm:w-20 sm:h-30 rounded-xl border-2 border-dashed transition-all duration-500 overflow-hidden group",
+                                "relative w-16 h-24 sm:w-20 sm:h-30 rounded-[1.1rem] border transition-all duration-500 overflow-hidden group",
                                 card
-                                    ? "border-primary/50 bg-card/30 shadow-[0_0_15px_-5px_rgba(139,92,246,0.5)] scale-100"
-                                    : "border-muted-foreground/20 bg-muted/5 scale-95 opacity-60"
+                                    ? "border-white/15 bg-white/[0.04] shadow-[0_16px_40px_-28px_rgba(168,145,255,0.55)] scale-100"
+                                    : "border-dashed border-white/10 bg-white/[0.02] scale-95 opacity-60"
                             )}
                         >
                             {card ? (
@@ -47,7 +47,7 @@ export function SelectedCardsSlots({
                                                 card.isReversed ? "rotate-180" : ""
                                             )}
                                         />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none" />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-white/10 pointer-events-none" />
 
                                         {/* Remove button */}
                                         <button
@@ -55,8 +55,8 @@ export function SelectedCardsSlots({
                                                 e.stopPropagation();
                                                 onUnselectCard(card.name);
                                             }}
-                                            className="absolute -top-1 -right-1 sm:top-1 sm:right-1 bg-destructive text-destructive-foreground rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg z-10"
-                                            aria-label="Remove card"
+                                            className="absolute -top-1 -right-1 sm:top-1 sm:right-1 bg-background/90 text-foreground rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg z-10 border border-white/10"
+                                            aria-label="카드 제거"
                                         >
                                             <X size={14} />
                                         </button>
@@ -64,7 +64,7 @@ export function SelectedCardsSlots({
                                 </>
                             ) : (
                                 <div className="absolute inset-0 flex items-center justify-center">
-                                    <span className="text-2xl font-serif text-muted-foreground/20">{index + 1}</span>
+                                    <span className="text-2xl font-serif text-muted-foreground/25">{index + 1}</span>
                                 </div>
                             )}
                         </div>

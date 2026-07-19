@@ -77,7 +77,7 @@ export function CardInterpretations({
             try {
                 const dataUrl = await toPng(modalRef.current as HTMLElement, {
                     cacheBust: true,
-                    backgroundColor: '#1a1525',
+                    backgroundColor: '#11172a',
                     style: {
                         // Expand to full height for capture, overriding the Tailwind classes
                         maxHeight: 'none',
@@ -102,8 +102,8 @@ export function CardInterpretations({
         <>
             {cardInterpretations.TarotCardData &&
                 cardInterpretations.TarotCardData.length > 0 && (
-                    <div className="mt-8 w-full max-w-4xl p-6 bg-secondary/30 backdrop-blur-md rounded-2xl shadow-xl relative z-10 border border-primary/20">
-                        <h2 className="text-3xl font-semibold mb-6 text-center text-primary font-serif italic">
+                    <div className="mt-8 w-full max-w-4xl p-6 bg-white/[0.04] backdrop-blur-2xl rounded-[2rem] shadow-[0_24px_70px_-35px_rgba(168,145,255,0.35)] relative z-10 border border-white/10">
+                        <h2 className="text-3xl font-semibold mb-6 text-center text-primary-foreground font-serif italic">
                             선택된 카드들
                         </h2>
                         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
@@ -114,9 +114,9 @@ export function CardInterpretations({
                                 return (
                                     <div
                                         key={index}
-                                        className="bg-card/60 backdrop-blur-sm border border-primary/20 rounded-xl overflow-hidden shadow-lg transform hover:-translate-y-1 transition-all duration-300 flex flex-col items-center p-4"
+                                        className="bg-card/70 backdrop-blur-sm border border-white/10 rounded-[1.25rem] overflow-hidden shadow-lg transform hover:-translate-y-1 transition-all duration-300 flex flex-col items-center p-4"
                                     >
-                                        <div className="relative w-24 h-36 mb-4 shadow-md rounded-md overflow-hidden">
+                                        <div className="relative w-24 h-36 mb-4 shadow-md rounded-lg overflow-hidden ring-1 ring-white/10">
                                             <Image
                                                 src={displayCard?.imageUrl || CARD_BACK_IMAGE}
                                                 alt={card.name}
@@ -143,16 +143,16 @@ export function CardInterpretations({
             {Array.isArray(cardInterpretations) &&
                 cardInterpretations[0]?.output &&
                 isOutputModalOpen && (
-                    <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-500">
+                    <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4 bg-background/75 backdrop-blur-md animate-in fade-in duration-500">
                         <div
                             ref={modalRef}
-                            className={`relative bg-[#1a1525] border border-primary/30 rounded-3xl shadow-[0_0_60px_-15px_rgba(139,92,246,0.4)] w-full max-w-2xl flex flex-col animate-in zoom-in-95 slide-in-from-bottom-4 duration-500 ${isSaving ? 'h-auto max-h-none overflow-visible' : 'max-h-[85vh] overflow-hidden'}`}
+                            className={`relative bg-[linear-gradient(180deg,rgba(17,23,42,0.98)_0%,rgba(23,30,54,0.98)_100%)] border border-white/10 rounded-[2rem] shadow-[0_24px_80px_-35px_rgba(168,145,255,0.5)] w-full max-w-2xl flex flex-col animate-in zoom-in-95 slide-in-from-bottom-4 duration-500 ${isSaving ? 'h-auto max-h-none overflow-visible' : 'max-h-[85vh] overflow-hidden'}`}
                         >
 
                             {/* Header sticky area */}
-                            <div className="flex-none p-6 pb-4 border-b border-white/5 flex flex-col gap-3 bg-card/40 z-10">
+                            <div className="flex-none p-6 pb-4 border-b border-white/5 flex flex-col gap-3 bg-white/[0.02] z-10">
                                 <div className="flex items-center justify-between">
-                                    <h3 className="text-2xl font-serif font-bold text-primary tracking-wide">
+                                    <h3 className="text-2xl font-serif font-bold text-primary-foreground tracking-wide">
                                         당신의 패를 읽겠습니다
                                     </h3>
                                     <button
@@ -182,7 +182,7 @@ export function CardInterpretations({
 
                             {/* Scrollable Content */}
                             <div className={`flex-1 p-6 md:p-8 scroll-smooth ${isSaving ? 'overflow-visible' : 'overflow-y-auto'}`}>
-                                <div className="text-foreground/90 text-[15px] md:text-[16px] leading-[1.8] md:leading-[2] tracking-wide">
+                                <div className="text-foreground/92 text-[15px] md:text-[16px] leading-[1.9] md:leading-[2.05] tracking-wide">
                                     {highlightOutput(cardInterpretations[0].output)}
                                 </div>
                             </div>
@@ -191,14 +191,14 @@ export function CardInterpretations({
                             {!isSaving && (
                                 <div className="flex-none p-6 pt-4 border-t border-white/5 bg-card/40 flex gap-4">
                                     <Button
-                                        className="flex-1 py-6 text-lg rounded-xl bg-card border border-primary/30 hover:bg-primary/10 text-primary transition-all"
+                                        className="flex-1 py-6 text-lg rounded-2xl bg-card border border-white/10 hover:bg-white/10 text-primary-foreground transition-all"
                                         onClick={handleSaveImage}
                                         disabled={isSaving}
                                     >
                                         저장하기
                                     </Button>
                                     <Button
-                                        className="flex-1 py-6 text-lg rounded-xl bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-primary-foreground shadow-[0_0_20px_-5px_var(--primary)] transition-all hover:scale-[1.01]"
+                                        className="flex-1 py-6 text-lg rounded-2xl bg-gradient-to-r from-primary via-secondary to-[#e4dcff] hover:opacity-95 text-primary-foreground shadow-[0_16px_32px_-20px_rgba(168,145,255,0.65)] transition-all hover:scale-[1.01]"
                                         onClick={() => {
                                             handleCloseModal();
                                             onRestart();

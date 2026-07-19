@@ -15,9 +15,9 @@ const playfairDisplay = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "MysticTarot",
+  title: "Tarotal | 문라이트 젠 타로",
   description:
-    "Discover your destiny with MysticTarot. Get daily card readings, uncover hidden truths, and gain clarity on love, career, and life.",
+    "조용하고 감성적인 문라이트 젠 무드의 타로 리딩 서비스입니다.",
 };
 
 export default function RootLayout({
@@ -26,7 +26,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="ko">
       <body
         className={`${plusJakartaSans.variable} ${playfairDisplay.variable} font-sans antialiased`}
       >

@@ -38,10 +38,10 @@ export const TarotDeck = React.memo(
                             key={card.name}
                             onClick={() => toggleCardSelection(card.name)}
                             className={cn(
-                                "absolute cursor-pointer transition-all duration-700",
+                                "absolute cursor-pointer transition-all duration-700 will-change-transform",
                                 selected
                                     ? "opacity-0 pointer-events-none scale-0"
-                                    : "opacity-100 hover:z-20 hover:scale-110 shadow-lg",
+                                    : "opacity-100 hover:z-20 hover:scale-105 shadow-lg",
                                 isLoading || isShuffling ? "pointer-events-none opacity-50" : ""
                             )}
                             style={{
@@ -53,7 +53,7 @@ export const TarotDeck = React.memo(
                                 src={CARD_BACK_IMAGE}
                                 alt={card.name}
                                 className={cn(
-                                    "rounded-md object-cover w-16 h-auto border border-black/30"
+                                    "rounded-lg object-cover w-16 h-auto border border-white/10 shadow-[0_8px_24px_-12px_rgba(168,145,255,0.45)]"
                                 )}
                                 width={64}
                                 height={96}

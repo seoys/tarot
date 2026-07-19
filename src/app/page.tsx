@@ -243,10 +243,12 @@ export default function Home() {
   const error = null; // Placeholder for error state
 
   return (
-    <main className="min-h-screen relative flex flex-col items-center justify-center p-4 sm:p-8 md:p-24 overflow-hidden bg-background selection:bg-primary/30">
-      {/* Mystic Background Glows */}
-      <div className="fixed top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/15 blur-[100px] rounded-full pointer-events-none" />
-      <div className="fixed bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-primary/10 blur-[100px] rounded-full pointer-events-none" />
+    <main className="min-h-screen relative flex flex-col items-center justify-center p-4 sm:p-8 md:p-24 overflow-hidden bg-background selection:bg-primary/20">
+      {/* Moonlight layers */}
+      <div className="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_top,_hsla(259,42%,66%,0.16),_transparent_36%),radial-gradient(circle_at_bottom_right,_hsla(335,34%,66%,0.10),_transparent_30%),linear-gradient(180deg,_hsla(228,35%,7%,0.9)_0%,_hsla(228,35%,7%,1)_100%)]" />
+      <div className="fixed inset-0 pointer-events-none opacity-[0.16] bg-[radial-gradient(circle,_rgba(255,255,255,0.8)_1px,transparent_1px)] [background-size:26px_26px]" />
+      <div className="fixed top-[-10%] left-[-10%] w-[48%] h-[48%] bg-primary/15 blur-[120px] rounded-full pointer-events-none" />
+      <div className="fixed bottom-[-12%] right-[-10%] w-[44%] h-[44%] bg-secondary/12 blur-[120px] rounded-full pointer-events-none" />
 
       {/* Funnel Router */}
       <div className="w-full max-w-7xl relative z-10 flex flex-col items-center">
@@ -262,8 +264,8 @@ export default function Home() {
         {step === 'tarot' && (
           <div className="w-full flex flex-col items-center animate-in fade-in zoom-in-95 duration-700">
             {/* Title Section */}
-            <div className="text-center mb-12 relative">
-              <h1 className="text-5xl md:text-7xl font-serif tracking-tight text-primary-foreground drop-shadow-[0_0_15px_rgba(139,92,246,0.5)] mb-4">
+            <div className="text-center mb-12 relative px-4">
+              <h1 className="text-5xl md:text-7xl font-serif tracking-tight text-primary-foreground drop-shadow-[0_0_24px_rgba(168,145,255,0.35)] mb-4">
                 Tarotal
               </h1>
               <p className="text-lg md:text-xl text-muted-foreground font-light max-w-xl mx-auto leading-relaxed">
@@ -298,10 +300,10 @@ export default function Home() {
 
             {/* Loading Indicator */}
             {isAnalyzing && (
-              <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm animate-in fade-in duration-300">
-                <LoadingIndicator />
-              </div>
-            )}
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/78 backdrop-blur-md animate-in fade-in duration-300">
+                  <LoadingIndicator />
+                </div>
+              )}
 
             {/* Error State */}
             {error && (

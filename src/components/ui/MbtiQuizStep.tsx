@@ -53,13 +53,13 @@ export function MbtiQuizStep({ onComplete }: MbtiQuizStepProps) {
         <div className="flex flex-col items-center justify-center min-h-[70vh] px-4">
             {/* Progress Bar */}
             <div className="w-full max-w-md mb-8">
-                <div className="flex justify-between text-xs text-primary/70 mb-2 px-1 font-medium">
+                <div className="flex justify-between text-xs text-primary/70 mb-2 px-1 font-medium tracking-[0.2em] uppercase">
                     <span>Q{currentIdx + 1}</span>
                     <span>당신의 본질을 읽는 중...</span>
                 </div>
-                <div className="h-1.5 w-full bg-primary/20 rounded-full overflow-hidden">
+                <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
                     <div
-                        className="h-full bg-primary transition-all duration-500 ease-out shadow-[0_0_10px_var(--primary)]"
+                        className="h-full bg-gradient-to-r from-primary via-secondary to-[#e5ddff] transition-all duration-500 ease-out shadow-[0_0_16px_rgba(168,145,255,0.55)]"
                         style={{ width: `${progress}%` }}
                     />
                 </div>
@@ -70,8 +70,8 @@ export function MbtiQuizStep({ onComplete }: MbtiQuizStepProps) {
                 isTransitioning ? "opacity-0 translate-y-4 scale-95" : "opacity-100 translate-y-0 scale-100"
             )}>
                 {/* Question Card */}
-                <div className="bg-card/40 backdrop-blur-xl border border-primary/20 rounded-3xl p-8 md:p-10 shadow-[0_0_40px_-10px_rgba(139,92,246,0.15)] relative overflow-hidden flex flex-col items-center text-center">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 rounded-full blur-[50px] -mr-16 -mt-16 pointer-events-none" />
+                <div className="bg-white/[0.04] backdrop-blur-2xl border border-white/10 rounded-[2rem] p-8 md:p-10 shadow-[0_24px_70px_-35px_rgba(168,145,255,0.35)] relative overflow-hidden flex flex-col items-center text-center">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary/15 rounded-full blur-[60px] -mr-16 -mt-16 pointer-events-none" />
 
                     <p className="text-xs text-primary/60 uppercase tracking-widest mb-3">점술가가 묻습니다</p>
                     <h3 className="text-xl md:text-2xl font-serif text-primary-foreground mb-8 leading-relaxed">
@@ -81,13 +81,13 @@ export function MbtiQuizStep({ onComplete }: MbtiQuizStepProps) {
                     <div className="flex flex-col gap-4 w-full">
                         <button
                             onClick={() => handleSelect(currentQ.optionA.value)}
-                            className="w-full text-left bg-background/50 hover:bg-primary/20 border border-primary/30 hover:border-primary/50 text-foreground p-5 rounded-2xl transition-all duration-300 hover:shadow-[0_0_20px_-5px_rgba(139,92,246,0.3)] hover:-translate-y-1"
+                            className="w-full text-left bg-background/55 hover:bg-white/10 border border-white/10 hover:border-primary/30 text-foreground p-5 rounded-2xl transition-all duration-300 hover:shadow-[0_12px_30px_-20px_rgba(168,145,255,0.6)] hover:-translate-y-0.5"
                         >
                             <p className="text-sm md:text-base">{currentQ.optionA.text}</p>
                         </button>
                         <button
                             onClick={() => handleSelect(currentQ.optionB.value)}
-                            className="w-full text-left bg-background/50 hover:bg-primary/20 border border-primary/30 hover:border-primary/50 text-foreground p-5 rounded-2xl transition-all duration-300 hover:shadow-[0_0_20px_-5px_rgba(139,92,246,0.3)] hover:-translate-y-1"
+                            className="w-full text-left bg-background/55 hover:bg-white/10 border border-white/10 hover:border-primary/30 text-foreground p-5 rounded-2xl transition-all duration-300 hover:shadow-[0_12px_30px_-20px_rgba(168,145,255,0.6)] hover:-translate-y-0.5"
                         >
                             <p className="text-sm md:text-base">{currentQ.optionB.text}</p>
                         </button>
