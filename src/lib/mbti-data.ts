@@ -2,6 +2,59 @@ import { MbtiQuestion } from "../types/user-journey";
 
 const createQuestions = (questions: MbtiQuestion[]) => questions;
 
+let recentQuestionIds: number[] = [];
+
+export type MbtiAxisKey = "E-I" | "S-N" | "T-F" | "J-P";
+
+export interface MbtiQuizData {
+    questions: MbtiQuestion[];
+    axisCounts: Record<MbtiAxisKey, number>;
+}
+
+const axisKeys: MbtiAxisKey[] = ["E-I", "S-N", "T-F", "J-P"];
+
+const pickQuestion = (questions: MbtiQuestion[]) => {
+    const eligible = questions.filter((question) => !recentQuestionIds.includes(question.id));
+    const pool = eligible.length > 0 ? eligible : questions;
+    return pool[Math.floor(Math.random() * pool.length)];
+};
+
+const getRandomAxisKeys = (count: number) => {
+    return [...axisKeys].sort(() => Math.random() - 0.5).slice(0, count);
+};
+
+export function getMbtiQuiz(): MbtiQuizData {
+    const selectedAxisKeys = [...axisKeys, ...getRandomAxisKeys(2)];
+    const usedIds = new Set<number>();
+
+    const questions = selectedAxisKeys.map((axisKey) => {
+        const axisQuestions = mbtiQuestionPool[axisKey];
+        const eligible = axisQuestions.filter((question) => !recentQuestionIds.includes(question.id) && !usedIds.has(question.id));
+        const pool = eligible.length > 0 ? eligible : axisQuestions.filter((question) => !usedIds.has(question.id));
+        const finalPool = pool.length > 0 ? pool : axisQuestions;
+        const question = finalPool[Math.floor(Math.random() * finalPool.length)];
+        usedIds.add(question.id);
+        return question;
+    });
+
+    recentQuestionIds = questions.map((question) => question.id).slice(-8);
+
+    const axisCounts = questions.reduce(
+        (counts, question) => {
+            counts[question.indicator] += 1;
+            return counts;
+        },
+        {
+            "E-I": 0,
+            "S-N": 0,
+            "T-F": 0,
+            "J-P": 0,
+        } as Record<MbtiAxisKey, number>
+    );
+
+    return { questions, axisCounts };
+}
+
 export const mbtiQuestionPool = {
     "E-I": createQuestions([
         {
@@ -31,6 +84,34 @@ export const mbtiQuestionPool = {
             text: "주말 계획이 갑자기 비었을 때 더 먼저 드는 생각은?",
             optionA: { text: "누구를 만날까, 어디를 갈까 바로 떠올린다.", value: "E" },
             optionB: { text: "오늘은 나만의 시간을 어떻게 쓸지 떠올린다.", value: "I" },
+        },
+        {
+            id: 17,
+            indicator: "E-I",
+            text: "좋아하는 노래가 나오면 더 자연스러운 반응은?",
+            optionA: { text: "누군가와 함께 듣고 싶은 마음이 먼저 든다.", value: "E" },
+            optionB: { text: "혼자서 반복 재생하며 몰입한다.", value: "I" },
+        },
+        {
+            id: 18,
+            indicator: "E-I",
+            text: "낯선 자리에서 더 편한 움직임은?",
+            optionA: { text: "먼저 말을 걸며 분위기에 들어간다.", value: "E" },
+            optionB: { text: "잠시 지켜보다 익숙해지면 움직인다.", value: "I" },
+        },
+        {
+            id: 25,
+            indicator: "E-I",
+            text: "좋아하는 취미 모임에 갔을 때 더 자연스러운 건?",
+            optionA: { text: "새로운 사람들과 바로 섞여 대화한다.", value: "E" },
+            optionB: { text: "알던 사람과 먼저 깊게 이야기한다.", value: "I" },
+        },
+        {
+            id: 26,
+            indicator: "E-I",
+            text: "작은 성취를 했을 때 더 먼저 하고 싶은 것은?",
+            optionA: { text: "누군가에게 바로 알려 함께 기뻐한다.", value: "E" },
+            optionB: { text: "혼자 조용히 여운을 즐긴다.", value: "I" },
         },
     ]),
     "S-N": createQuestions([
@@ -62,6 +143,34 @@ export const mbtiQuestionPool = {
             optionA: { text: "실제로 쓸 수 있고 만족도가 분명한 것", value: "S" },
             optionB: { text: "받는 사람의 취향과 상징성이 느껴지는 것", value: "N" },
         },
+        {
+            id: 19,
+            indicator: "S-N",
+            text: "새로운 소식을 들었을 때 더 먼저 떠오르는 건?",
+            optionA: { text: "무슨 일이 실제로 있었는지", value: "S" },
+            optionB: { text: "왜 그런 일이 생겼는지", value: "N" },
+        },
+        {
+            id: 20,
+            indicator: "S-N",
+            text: "사진이나 영상을 볼 때 더 오래 보는 포인트는?",
+            optionA: { text: "눈에 보이는 장면의 디테일", value: "S" },
+            optionB: { text: "장면이 남기는 분위기와 여운", value: "N" },
+        },
+        {
+            id: 27,
+            indicator: "S-N",
+            text: "정보를 정리할 때 더 편한 방식은?",
+            optionA: { text: "사실과 사례를 순서대로 정리한다.", value: "S" },
+            optionB: { text: "핵심 흐름과 의미를 중심으로 묶는다.", value: "N" },
+        },
+        {
+            id: 28,
+            indicator: "S-N",
+            text: "새로운 취향을 발견했을 때 더 먼저 보는 건?",
+            optionA: { text: "실제로 어떤 점이 좋은지 확인한다.", value: "S" },
+            optionB: { text: "내 삶에 어떤 기운을 주는지 느껴본다.", value: "N" },
+        },
     ]),
     "T-F": createQuestions([
         {
@@ -92,6 +201,34 @@ export const mbtiQuestionPool = {
             optionA: { text: "문제가 왜 생겼는지와 해결 가능성", value: "T" },
             optionB: { text: "서로의 감정이 왜 아팠는지", value: "F" },
         },
+        {
+            id: 21,
+            indicator: "T-F",
+            text: "조언을 해달라는 부탁을 받았을 때 더 가까운 방식은?",
+            optionA: { text: "현실적으로 가능한 선택을 먼저 말한다.", value: "T" },
+            optionB: { text: "마음을 다치지 않게 부드럽게 말한다.", value: "F" },
+        },
+        {
+            id: 22,
+            indicator: "T-F",
+            text: "실수가 생겼을 때 더 먼저 드는 반응은?",
+            optionA: { text: "무엇이 틀렸는지 파악한다.", value: "T" },
+            optionB: { text: "일단 많이 속상했겠다 싶다.", value: "F" },
+        },
+        {
+            id: 29,
+            indicator: "T-F",
+            text: "누군가가 선택을 망설일 때 더 자연스러운 도움은?",
+            optionA: { text: "장단점을 비교해 정리해 준다.", value: "T" },
+            optionB: { text: "왜 마음이 흔들리는지 함께 들어준다.", value: "F" },
+        },
+        {
+            id: 30,
+            indicator: "T-F",
+            text: "관계를 볼 때 더 오래 남는 기준은?",
+            optionA: { text: "서로에게 어떤 역할을 하는지", value: "T" },
+            optionB: { text: "서로가 어떤 감정을 나누는지", value: "F" },
+        },
     ]),
     "J-P": createQuestions([
         {
@@ -121,6 +258,34 @@ export const mbtiQuestionPool = {
             text: "결정을 미루는 상황에서 더 익숙한 것은?",
             optionA: { text: "마감 전에 정해두고 싶다.", value: "J" },
             optionB: { text: "조금 더 두고 보다가 정한다.", value: "P" },
+        },
+        {
+            id: 23,
+            indicator: "J-P",
+            text: "일정이 갑자기 생겼을 때 더 가까운 반응은?",
+            optionA: { text: "먼저 일정표를 다시 맞춘다.", value: "J" },
+            optionB: { text: "상황을 보며 유연하게 받아들인다.", value: "P" },
+        },
+        {
+            id: 24,
+            indicator: "J-P",
+            text: "끝내지 못한 일이 남아 있을 때 더 편한 건?",
+            optionA: { text: "정리해서 닫아두는 것", value: "J" },
+            optionB: { text: "조금 남아 있어도 괜찮은 것", value: "P" },
+        },
+        {
+            id: 31,
+            indicator: "J-P",
+            text: "일정이 갑자기 생겼을 때 더 가까운 반응은?",
+            optionA: { text: "먼저 일정표를 다시 맞춘다.", value: "J" },
+            optionB: { text: "상황을 보며 유연하게 받아들인다.", value: "P" },
+        },
+        {
+            id: 32,
+            indicator: "J-P",
+            text: "해야 할 목록이 생겼을 때 더 자연스러운 건?",
+            optionA: { text: "우선순위를 정해 체크해 나간다.", value: "J" },
+            optionB: { text: "크게 묶어서 유연하게 처리한다.", value: "P" },
         },
     ]),
 };

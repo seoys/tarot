@@ -13,6 +13,78 @@ import { TarotCard } from "@/services/tarot-card-analysis";
 import { tarotCardsData, CARD_BACK_IMAGE } from "@/lib/tarot-data";
 import { UserInfo } from "@/types/user-journey";
 
+const mbtiReadingNotes: Record<string, { title: string; text: string }> = {
+    INFP: {
+        title: "잔잔한 결을 읽는 타입",
+        text: "감정과 상징을 오래 곱씹는 편이라, 카드의 기운을 섬세하게 받아들입니다.",
+    },
+    INFJ: {
+        title: "흐름을 미리 느끼는 타입",
+        text: "보이지 않는 의미를 먼저 포착해서, 해석의 방향을 빠르게 잡습니다.",
+    },
+    ISFP: {
+        title: "감각으로 먼저 반응하는 타입",
+        text: "말보다 분위기를 먼저 읽어서, 현재의 카드와 직접적으로 연결합니다.",
+    },
+    ISFJ: {
+        title: "정성스럽게 기억하는 타입",
+        text: "세부를 놓치지 않고 차분히 받아들여, 결과를 안정적으로 소화합니다.",
+    },
+    ENFP: {
+        title: "가능성을 크게 여는 타입",
+        text: "카드의 의미를 확장해서 받아들이고, 해석을 새로운 이야기로 연결합니다.",
+    },
+    ENFJ: {
+        title: "사람의 흐름을 잘 보는 타입",
+        text: "관계와 분위기를 빠르게 읽어, 해석을 현실적인 조언으로 바꿉니다.",
+    },
+    ESFP: {
+        title: "지금의 온도를 잘 느끼는 타입",
+        text: "현재 감정과 상황을 생생하게 받아들여 결과를 쉽게 체감합니다.",
+    },
+    ESFJ: {
+        title: "균형과 관계를 챙기는 타입",
+        text: "주변의 분위기와 관계 맥락을 함께 보며 해석을 안정적으로 정리합니다.",
+    },
+    INTJ: {
+        title: "구조를 먼저 보는 타입",
+        text: "결과에서 패턴과 원리를 찾는 데 강해, 카드의 연결 고리를 빠르게 짚습니다.",
+    },
+    INTP: {
+        title: "의미를 분해해 보는 타입",
+        text: "카드의 메시지를 조각내어 분석하면서도, 의외의 연결을 잘 찾아냅니다.",
+    },
+    ISTP: {
+        title: "필요한 것만 정확히 보는 타입",
+        text: "핵심만 빠르게 잡아내서, 해석을 실용적으로 받아들이는 편입니다.",
+    },
+    ISTJ: {
+        title: "기준을 분명히 보는 타입",
+        text: "질서와 사실을 바탕으로 해석을 정리해서, 결과를 신뢰감 있게 받아들입니다.",
+    },
+    ENTJ: {
+        title: "방향을 바로 잡는 타입",
+        text: "결과를 목표와 실행으로 연결해, 카드의 메시지를 빠르게 정리합니다.",
+    },
+    ENTP: {
+        title: "새 해석을 잘 만드는 타입",
+        text: "카드의 의미를 여러 각도로 바라보며, 결과를 풍부하게 확장합니다.",
+    },
+    ESTP: {
+        title: "상황 판단이 빠른 타입",
+        text: "현재의 흐름을 즉각적으로 읽어, 해석을 현실적인 다음 행동으로 바꿉니다.",
+    },
+    ESTJ: {
+        title: "정리와 실행이 빠른 타입",
+        text: "카드의 메시지를 우선순위로 바꾸는 데 강해서, 결과를 명확히 받아들입니다.",
+    },
+};
+
+const getMbtiReadingNote = (mbti?: string) => {
+    if (!mbti) return null;
+    return mbtiReadingNotes[mbti] ?? null;
+};
+
 export function highlightOutput(text: string) {
     let processed = text
         // Headers (H2 and H3)
@@ -176,6 +248,14 @@ export function CardInterpretations({
                                                 hour: '2-digit', minute: '2-digit'
                                             })}</span>
                                         </span>
+                                    </div>
+                                )}
+                                {getMbtiReadingNote(userInfo?.mbti) && (
+                                    <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm leading-relaxed text-foreground/90">
+                                        <div className="font-medium text-primary-foreground mb-1">
+                                            {getMbtiReadingNote(userInfo?.mbti)?.title}
+                                        </div>
+                                        <div>{getMbtiReadingNote(userInfo?.mbti)?.text}</div>
                                     </div>
                                 )}
                             </div>

@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { UserInfo } from "@/types/user-journey";
-import { mbtiQuestionPool } from "@/lib/mbti-data";
+import { getMbtiQuiz } from "@/lib/mbti-data";
 import { cn } from "@/lib/utils";
 
 interface MbtiQuizStepProps {
@@ -20,19 +20,9 @@ export function MbtiQuizStep({ onComplete }: MbtiQuizStepProps) {
 
     const [isTransitioning, setIsTransitioning] = useState(false);
 
-    const questions = useMemo(() => {
-        const pickRandom = <T,>(items: T[], count: number) => {
-            const shuffled = [...items].sort(() => Math.random() - 0.5);
-            return shuffled.slice(0, count);
-        };
-
-        return [
-            ...pickRandom(mbtiQuestionPool["E-I"], 1),
-            ...pickRandom(mbtiQuestionPool["S-N"], 1),
-            ...pickRandom(mbtiQuestionPool["T-F"], 1),
-            ...pickRandom(mbtiQuestionPool["J-P"], 1),
-        ];
-    }, []);
+    const quiz = useMemo(() => getMbtiQuiz(), []);
+    const questions = quiz.questions;
+    const axisCounts = quiz.axisCounts;
 
     const handleSelect = (value: string) => {
         if (isTransitioning) return;
@@ -48,11 +38,18 @@ export function MbtiQuizStep({ onComplete }: MbtiQuizStepProps) {
                 setIsTransitioning(false);
             } else {
                 // Calculate final MBTI
+                const normalize = (positive: keyof typeof newAnswers, negative: keyof typeof newAnswers, axisKey: keyof typeof axisCounts) => {
+                    const count = Math.max(axisCounts[axisKey] || 1, 1);
+                    const positiveScore = newAnswers[positive] / count;
+                    const negativeScore = newAnswers[negative] / count;
+                    return positiveScore >= negativeScore;
+                };
+
                 const mbti = [
-                    newAnswers.E >= newAnswers.I ? "E" : "I",
-                    newAnswers.S >= newAnswers.N ? "S" : "N",
-                    newAnswers.T >= newAnswers.F ? "T" : "F",
-                    newAnswers.J >= newAnswers.P ? "J" : "P",
+                    normalize("E", "I", "E-I") ? "E" : "I",
+                    normalize("S", "N", "S-N") ? "S" : "N",
+                    normalize("T", "F", "T-F") ? "T" : "F",
+                    normalize("J", "P", "J-P") ? "J" : "P",
                 ].join("");
 
                 onComplete({ mbti });
