@@ -284,7 +284,7 @@ export default function Home() {
           <div className="w-full flex flex-col items-center animate-in fade-in zoom-in-95 duration-700">
             {/* Title Section */}
             <div className="text-center mb-8 sm:mb-12 relative px-2 sm:px-4 max-w-2xl">
-              <h1 className="text-4xl sm:text-5xl md:text-7xl font-serif tracking-tight text-primary-foreground drop-shadow-[0_0_24px_rgba(168,145,255,0.35)] mb-3 sm:mb-4">
+              <h1 className="text-4xl sm:text-5xl md:text-7xl font-serif tracking-tight text-foreground drop-shadow-[0_0_24px_rgba(168,145,255,0.35)] mb-3 sm:mb-4">
                 Tarotal
               </h1>
               <p className="text-base sm:text-lg md:text-xl text-muted-foreground font-light max-w-lg sm:max-w-xl mx-auto leading-relaxed px-2 sm:px-0">
@@ -294,17 +294,17 @@ export default function Home() {
 
             <div className="w-full max-w-md mb-5 sm:mb-6 px-2 sm:px-0">
               <div className="flex items-center justify-between gap-3 rounded-full border border-white/10 bg-white/[0.04] px-4 py-3 text-xs sm:text-sm text-muted-foreground backdrop-blur-md">
-                <span className="font-medium text-primary-foreground">현재 단계</span>
+                <span className="font-medium text-foreground">현재 단계</span>
                 <span>{getFlowStage()}</span>
               </div>
               <div className="mt-3 grid grid-cols-3 gap-2 text-[11px] sm:text-xs text-center">
-                <div className={`rounded-full border px-3 py-2 ${selectedCards.length === 0 && !isShuffling && !isLoading ? "border-primary/40 bg-primary/10 text-primary-foreground" : "border-white/10 bg-white/[0.03] text-muted-foreground"}`}>
+                <div className={`rounded-full border px-3 py-2 ${selectedCards.length === 0 && !isShuffling && !isLoading ? "border-primary/40 bg-primary/10 text-foreground" : "border-white/10 bg-white/[0.03] text-muted-foreground"}`}>
                   1 질문
                 </div>
-                <div className={`rounded-full border px-3 py-2 ${selectedCards.length > 0 ? "border-primary/40 bg-primary/10 text-primary-foreground" : "border-white/10 bg-white/[0.03] text-muted-foreground"}`}>
+                <div className={`rounded-full border px-3 py-2 ${selectedCards.length > 0 ? "border-primary/40 bg-primary/10 text-foreground" : "border-white/10 bg-white/[0.03] text-muted-foreground"}`}>
                   2 카드 선택
                 </div>
-                <div className={`rounded-full border px-3 py-2 ${(isLoading || isAnalyzing) ? "border-primary/40 bg-primary/10 text-primary-foreground" : "border-white/10 bg-white/[0.03] text-muted-foreground"}`}>
+                <div className={`rounded-full border px-3 py-2 ${(isLoading || isAnalyzing) ? "border-primary/40 bg-primary/10 text-foreground" : "border-white/10 bg-white/[0.03] text-muted-foreground"}`}>
                   3 해석 확인
                 </div>
               </div>

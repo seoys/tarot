@@ -62,7 +62,7 @@ export function BirthdateStep({ onComplete }: BirthdateStepProps) {
 
                 <div className="relative z-10 text-center mb-5 sm:mb-6">
                     <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.28em] sm:tracking-[0.35em] text-primary/70 mb-2 sm:mb-3">Moonlight Zen</p>
-                    <h2 className="text-[1.65rem] sm:text-2xl md:text-[2rem] font-serif text-primary-foreground mb-3 sm:mb-4 leading-tight">
+                    <h2 className="text-[1.65rem] sm:text-2xl md:text-[2rem] font-serif text-foreground mb-3 sm:mb-4 leading-tight">
                         {step === "name" && "이름을 알려주세요."}
                         {step === "date" && "이 세상에 태어난 날은요?"}
                         {step === "time" && "태어난 시간도 있을까요?"}
@@ -118,7 +118,7 @@ export function BirthdateStep({ onComplete }: BirthdateStepProps) {
                                 <button
                                     type="button"
                                     onClick={() => setIsTimeUnknown((prev) => !prev)}
-                                    className={`text-xs rounded-full border px-3 py-1.5 transition-colors ${isTimeUnknown ? "border-primary/40 bg-primary/10 text-primary-foreground" : "border-white/10 bg-white/[0.03] text-muted-foreground hover:text-foreground"}`}
+                                    className={`text-xs rounded-full border px-3 py-1.5 transition-colors ${isTimeUnknown ? "border-primary/40 bg-primary/10 text-foreground" : "border-white/10 bg-white/[0.03] text-muted-foreground hover:text-foreground"}`}
                                 >
                                     시간 모름
                                 </button>

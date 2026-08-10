@@ -85,7 +85,7 @@ export function MbtiQuizStep({ onComplete }: MbtiQuizStepProps) {
                     <div className="absolute top-0 right-0 w-32 h-32 bg-primary/15 rounded-full blur-[60px] -mr-16 -mt-16 pointer-events-none" />
 
                     <p className="text-xs text-primary/70 mb-3">질문</p>
-                    <h3 className="text-lg sm:text-xl md:text-2xl font-serif text-primary-foreground mb-6 sm:mb-8 leading-[1.75]">
+                    <h3 className="text-lg sm:text-xl md:text-2xl font-serif text-foreground mb-6 sm:mb-8 leading-[1.75]">
                         {currentQ.text}
                     </h3>
 

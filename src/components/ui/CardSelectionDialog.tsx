@@ -69,7 +69,7 @@ export function CardSelectionDialog({
                             </AlertDialogTrigger>
                             <AlertDialogContent className="bg-card/95 backdrop-blur-2xl border-white/10 z-[2000] shadow-[0_24px_60px_-30px_rgba(168,145,255,0.45)] max-w-sm rounded-[2rem] mx-auto px-4 sm:px-6 py-5 sm:py-6">
                                 <AlertDialogHeader>
-                                    <AlertDialogTitle className="text-2xl font-serif text-center text-primary-foreground">
+                                    <AlertDialogTitle className="text-2xl font-serif text-center text-foreground">
                                         선택 완료
                                     </AlertDialogTitle>
                                     <AlertDialogDescription className="text-center text-muted-foreground leading-relaxed">

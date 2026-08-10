@@ -27,7 +27,7 @@ export function PreviewCardDialog({
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
             <DialogContent className="max-w-sm border-white/10 bg-card/96 backdrop-blur-2xl text-foreground shadow-[0_24px_60px_-30px_rgba(168,145,255,0.45)] rounded-[2rem] px-4 sm:px-6 py-5 sm:py-6">
                 <DialogHeader className="mb-2">
-                    <DialogTitle className="font-serif text-2xl text-center text-primary-foreground tracking-wide">
+                    <DialogTitle className="font-serif text-2xl text-center text-foreground tracking-wide">
                         {card.name}
                     </DialogTitle>
                     <DialogDescription className="text-center text-muted-foreground">

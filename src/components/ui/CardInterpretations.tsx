@@ -89,10 +89,10 @@ const getMbtiReadingNote = (mbti?: string) => {
 export function highlightOutput(text: string) {
     let processed = text
         // Headers (H2 and H3)
-        .replace(/^##\s+(.*)/gm, '<h2 class="text-2xl font-serif font-bold text-primary-foreground mt-8 mb-4 pb-2 border-b border-white/10">$1</h2>')
-        .replace(/^###\s+(.*)/gm, '<h3 class="text-xl font-bold text-primary-foreground mt-6 mb-3">$1</h3>')
+        .replace(/^##\s+(.*)/gm, '<h2 class="text-2xl font-serif font-bold text-foreground mt-8 mb-4 pb-2 border-b border-white/10">$1</h2>')
+        .replace(/^###\s+(.*)/gm, '<h3 class="text-xl font-bold text-foreground mt-6 mb-3">$1</h3>')
         // Bold text
-        .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-primary-foreground text-[1.03em]">$1</strong>')
+        .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-foreground text-[1.03em]">$1</strong>')
         // Italic text
         .replace(/\*(.*?)\*/g, '<em class="not-italic text-muted-foreground">$1</em>')
         // Bullet points
@@ -239,7 +239,7 @@ export function CardInterpretations({
             {cardInterpretations.TarotCardData &&
                 cardInterpretations.TarotCardData.length > 0 && (
                     <div className="mt-8 w-full max-w-4xl p-6 bg-white/[0.04] backdrop-blur-2xl rounded-[2rem] shadow-[0_24px_70px_-35px_rgba(168,145,255,0.35)] relative z-10 border border-white/10">
-                        <h2 className="text-3xl font-semibold mb-6 text-center text-primary-foreground font-serif animate-in fade-in duration-500">
+                        <h2 className="text-3xl font-semibold mb-6 text-center text-foreground font-serif animate-in fade-in duration-500">
                             카드 요약
                         </h2>
                         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 animate-in fade-in slide-in-from-bottom-3 duration-700">
@@ -263,7 +263,7 @@ export function CardInterpretations({
                                             />
                                         </div>
                                         <div className="text-center w-full">
-                                            <h3 className="text-base font-semibold text-primary-foreground truncate w-full">
+                                            <h3 className="text-base font-semibold text-foreground truncate w-full">
                                                 {card.name}
                                             </h3>
                                         <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
@@ -289,7 +289,7 @@ export function CardInterpretations({
                             {/* Header sticky area */}
                             <div className="flex-none p-5 sm:p-6 pb-4 border-b border-white/5 flex flex-col gap-3 bg-white/[0.02] z-10">
                                 <div className="flex items-center justify-between">
-                                    <h3 className="text-xl sm:text-2xl font-serif font-bold text-primary-foreground tracking-wide">
+                                    <h3 className="text-xl sm:text-2xl font-serif font-bold text-foreground tracking-wide">
                                         해석 보기
                                     </h3>
                                     <button
@@ -317,7 +317,7 @@ export function CardInterpretations({
                                 )}
                                 {getMbtiReadingNote(userInfo?.mbti) && (
                                     <div className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-4 text-sm leading-relaxed text-foreground/90 shadow-[0_16px_32px_-24px_rgba(168,145,255,0.45)]">
-                                        <div className="font-medium text-primary-foreground mb-1">
+                                        <div className="font-medium text-foreground mb-1">
                                             {getMbtiReadingNote(userInfo?.mbti)?.title}
                                         </div>
                                         <div>{getMbtiReadingNote(userInfo?.mbti)?.text}</div>
@@ -337,7 +337,7 @@ export function CardInterpretations({
                                                 <p className="text-xs sm:text-sm uppercase tracking-[0.45em] text-muted-foreground animate-in fade-in slide-in-from-bottom-1 duration-500">
                                                     오늘의 첫 숨결
                                                 </p>
-                                                <h4 className="mt-2 text-3xl sm:text-4xl md:text-5xl font-serif font-bold leading-[1.06] text-primary-foreground drop-shadow-[0_10px_30px_rgba(168,145,255,0.22)] animate-in fade-in slide-in-from-bottom-2 duration-700">
+                                                <h4 className="mt-2 text-3xl sm:text-4xl md:text-5xl font-serif font-bold leading-[1.06] text-foreground drop-shadow-[0_10px_30px_rgba(168,145,255,0.22)] animate-in fade-in slide-in-from-bottom-2 duration-700">
                                                     카드가 먼저 속삭이는
                                                     <span className="block text-primary/95">가장 조용한 진실</span>
                                                 </h4>
@@ -364,7 +364,7 @@ export function CardInterpretations({
                                         <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-1 animate-in fade-in slide-in-from-bottom-2 duration-700" style={{ animationDelay: "180ms" }}>
                                             <div className="rounded-[1.5rem] border border-white/10 bg-white/[0.05] p-4 backdrop-blur-sm transition-transform duration-300 hover:-translate-y-0.5">
                                                 <p className="text-[10px] uppercase tracking-[0.35em] text-primary/80">분위기</p>
-                                                <p className="mt-2 text-base sm:text-lg font-medium text-primary-foreground">
+                                                <p className="mt-2 text-base sm:text-lg font-medium text-foreground">
                                                     문라이트 젠 리딩
                                                 </p>
                                                 <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
@@ -374,7 +374,7 @@ export function CardInterpretations({
                                             {userInfo && (
                                                 <div className="rounded-[1.5rem] border border-white/10 bg-white/[0.05] p-4 backdrop-blur-sm transition-transform duration-300 hover:-translate-y-0.5">
                                                     <p className="text-[10px] uppercase tracking-[0.35em] text-primary/80">리더</p>
-                                                    <p className="mt-2 text-base sm:text-lg font-medium text-primary-foreground">
+                                                    <p className="mt-2 text-base sm:text-lg font-medium text-foreground">
                                                         {userInfo.name}님
                                                     </p>
                                                     <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
@@ -408,7 +408,7 @@ export function CardInterpretations({
                             {!isSaving && (
                                 <div className="flex-none p-6 pt-4 border-t border-white/5 bg-card/40 flex gap-4">
                                     <Button
-                                        className="flex-1 py-6 text-lg rounded-2xl bg-card border border-white/10 hover:bg-white/10 text-primary-foreground transition-all"
+                                        className="flex-1 py-6 text-lg rounded-2xl bg-card border border-white/10 hover:bg-white/10 text-foreground transition-all"
                                         onClick={handleSaveImage}
                                         disabled={isSaving}
                                     >
