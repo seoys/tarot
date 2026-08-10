@@ -1,7 +1,6 @@
 import React, { useRef, useState } from "react";
 import Image from "next/image";
 import { toPng } from "html-to-image";
-import { layoutWithLines, prepareWithSegments } from "@chenglou/pretext";
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -109,6 +108,23 @@ export function highlightOutput(text: string) {
     return <div dangerouslySetInnerHTML={{ __html: processed }} className="prose prose-invert prose-p:leading-relaxed prose-p:text-[16px] prose-p:text-foreground/95 max-w-none space-y-2" />;
 }
 
+function stripInlineMarkdown(text: string) {
+    return text
+        .replace(/\*\*(.*?)\*\*/g, "$1")
+        .replace(/^#+\s*/gm, "")
+        .replace(/^[-*]\s+/gm, "")
+        .replace(/\s+/g, " ")
+        .trim();
+}
+
+function parseReadingSections(output: string) {
+    const matches = [...output.matchAll(/^\d+\.\s*\*\*(.+?)\*\*:?\s*([\s\S]*?)(?=\n\s*\d+\.\s*\*\*|$)/gm)];
+    return matches.map((match) => ({
+        title: stripInlineMarkdown(match[1]),
+        body: stripInlineMarkdown(match[2]),
+    }));
+}
+
 interface CardInterpretationsProps {
     cardInterpretations: TarotCard | any | null;
     clearInterpretations: () => void;
@@ -133,8 +149,6 @@ export function CardInterpretations({
     const modalRef = useRef<HTMLDivElement>(null);
     const [isSaving, setIsSaving] = useState(false);
     const [showDetails, setShowDetails] = useState(false);
-    const [modalWidth, setModalWidth] = useState(0);
-    const [openingLines, setOpeningLines] = useState<string[]>([]);
 
     React.useEffect(() => {
         if (!isOutputModalOpen) {
@@ -146,55 +160,14 @@ export function CardInterpretations({
         return () => window.clearTimeout(timeoutId);
     }, [isOutputModalOpen]);
 
-    React.useEffect(() => {
-        if (!isOutputModalOpen) {
-            setModalWidth(0);
-            return;
-        }
-
-        const updateModalWidth = () => {
-            setModalWidth(Math.max(280, Math.min(window.innerWidth - 48, 640)));
-        };
-
-        updateModalWidth();
-        window.addEventListener("resize", updateModalWidth);
-
-        return () => window.removeEventListener("resize", updateModalWidth);
-    }, [isOutputModalOpen]);
-
-    React.useEffect(() => {
-        if (!isOutputModalOpen) {
-            setOpeningLines([]);
-            return;
-        }
-
-        const openingText =
-            cardInterpretations?.[0]?.output?.split("\n").find((line: string) => line.trim()) ??
-            "결과를 읽고 있습니다.";
-
-        if (!modalWidth) return;
-
-        try {
-            const prepared = prepareWithSegments(
-                openingText,
-                '600 20px "Playfair Display", Georgia, serif',
-            );
-            const layout = layoutWithLines(
-                prepared,
-                Math.max(240, modalWidth - 64),
-                30,
-            );
-
-            setOpeningLines(layout.lines.slice(0, 4).map((line) => line.text.trim()));
-        } catch {
-            setOpeningLines([openingText]);
-        }
-    }, [cardInterpretations, isOutputModalOpen, modalWidth]);
-
     if (!cardInterpretations) return null;
 
+    const rawOutput: string = cardInterpretations?.[0]?.output ?? "";
+    const readingSections = parseReadingSections(rawOutput);
+    const moodSection = readingSections[0];
     const openingText =
-        cardInterpretations?.[0]?.output?.split("\n").find((line: string) => line.trim()) ??
+        moodSection?.body ||
+        stripInlineMarkdown(rawOutput.split("\n").find((line: string) => line.trim()) ?? "") ||
         "결과를 읽고 있습니다.";
 
     const handleCloseModal = () => {
@@ -343,21 +316,14 @@ export function CardInterpretations({
                                                 </h4>
                                             </div>
                                             <div className="space-y-2 text-[15px] sm:text-[17px] leading-[1.95] text-foreground/92">
-                                                {openingLines.length > 0 ? (
-                                                    openingLines.map((line, index) => (
-                                                        <div
-                                                            key={`${line}-${index}`}
-                                                            className="rounded-2xl border border-white/8 bg-white/[0.04] px-4 py-3 shadow-[0_12px_30px_-24px_rgba(168,145,255,0.45)] animate-in fade-in slide-in-from-bottom-2 duration-500"
-                                                            style={{ animationDelay: `${180 + index * 110}ms` }}
-                                                        >
-                                                            {line}
-                                                        </div>
-                                                    ))
-                                                ) : (
-                                                    <div className="rounded-2xl border border-white/8 bg-white/[0.04] px-4 py-3 text-foreground/80">
-                                                        {openingText}
-                                                    </div>
-                                                )}
+                                                <div className="rounded-2xl border border-white/8 bg-white/[0.04] px-4 py-3 shadow-[0_12px_30px_-24px_rgba(168,145,255,0.45)] animate-in fade-in slide-in-from-bottom-2 duration-500">
+                                                    {moodSection?.title && (
+                                                        <p className="text-[10px] uppercase tracking-[0.3em] text-primary/80 mb-1">
+                                                            {moodSection.title}
+                                                        </p>
+                                                    )}
+                                                    <p>{openingText}</p>
+                                                </div>
                                             </div>
                                         </div>
 
