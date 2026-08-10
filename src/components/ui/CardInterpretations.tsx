@@ -1,4 +1,5 @@
 import React, { useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import { toPng } from "html-to-image";
 import { Button } from "@/components/ui/button";
@@ -252,7 +253,7 @@ export function CardInterpretations({
 
             {Array.isArray(cardInterpretations) &&
                 cardInterpretations[0]?.output &&
-                isOutputModalOpen && (
+                isOutputModalOpen && createPortal(
                     <div className="fixed inset-0 z-[5000] flex items-stretch justify-center p-2 sm:items-center sm:p-4 bg-background/75 backdrop-blur-md animate-in fade-in duration-500">
                         <div
                             ref={modalRef}
@@ -298,7 +299,8 @@ export function CardInterpretations({
                                 )}
                             </div>
 
-                            <div className="flex-none px-4 sm:px-6 pt-4 sm:pt-6">
+                            {/* Scrollable Content */}
+                            <div className={`flex-1 min-h-0 px-4 sm:px-6 pt-4 sm:pt-6 scroll-smooth ${isSaving ? 'overflow-visible' : 'overflow-y-auto'}`}>
                                 <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[radial-gradient(circle_at_top_left,rgba(168,145,255,0.24),transparent_42%),linear-gradient(180deg,rgba(20,26,47,0.98)_0%,rgba(15,20,38,0.98)_100%)] px-5 py-5 sm:px-6 sm:py-6 shadow-[0_24px_50px_-28px_rgba(168,145,255,0.5)] animate-in fade-in slide-in-from-bottom-4 duration-700">
                                     <div className="absolute inset-0 opacity-80 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.15),transparent_28%),radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.07),transparent_24%)]" />
                                     <div className="relative flex flex-col gap-5 sm:gap-6 md:grid md:grid-cols-[1.4fr_0.9fr] md:items-end">
@@ -351,11 +353,8 @@ export function CardInterpretations({
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            {/* Scrollable Content */}
-                            <div className={`flex-1 p-4 sm:p-6 md:p-8 scroll-smooth ${isSaving ? 'overflow-visible' : 'overflow-y-auto'}`}>
-                                <div className="space-y-4 sm:space-y-5">
+                                <div className="space-y-4 sm:space-y-5 py-4 sm:py-6 md:pb-8">
                                     <div className="rounded-[1.5rem] border border-white/10 bg-white/[0.06] px-4 py-5 text-foreground/95 shadow-[0_20px_40px_-28px_rgba(168,145,255,0.45)] animate-in fade-in slide-in-from-bottom-2 duration-500" style={{ animationDelay: "120ms" }}>
                                         <p className="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-primary/80 mb-2">한 줄 요약</p>
                                         <p className="text-base sm:text-lg md:text-lg leading-relaxed font-semibold">
@@ -392,7 +391,8 @@ export function CardInterpretations({
                                 </div>
                             )}
                         </div>
-                    </div>
+                    </div>,
+                    document.body
                 )}
         </>
     );
