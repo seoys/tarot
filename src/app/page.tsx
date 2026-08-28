@@ -268,7 +268,7 @@ export default function Home() {
   const shuffleCards = handleShuffle;
 
   return (
-    <main className="min-h-screen relative flex flex-col items-center justify-center p-4 sm:p-8 md:p-24 overflow-hidden bg-background selection:bg-primary/20">
+    <main className="min-h-screen relative flex flex-col items-center justify-center p-4 sm:p-8 md:p-12 lg:p-16 overflow-hidden bg-background selection:bg-primary/20">
       {/* Moonlight layers */}
       <div className="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_top,_hsla(259,42%,66%,0.16),_transparent_36%),radial-gradient(circle_at_bottom_right,_hsla(335,34%,66%,0.10),_transparent_30%),linear-gradient(180deg,_hsla(228,35%,7%,0.9)_0%,_hsla(228,35%,7%,1)_100%)]" />
       <div className="fixed inset-0 pointer-events-none opacity-[0.16] bg-[radial-gradient(circle,_rgba(255,255,255,0.8)_1px,transparent_1px)] [background-size:26px_26px]" />
@@ -292,7 +292,7 @@ export default function Home() {
         {step === 'tarot' && (
           <div className="w-full flex flex-col items-center animate-in fade-in zoom-in-95 duration-700">
             {/* Title Section */}
-            <div className="text-center mb-8 sm:mb-12 relative px-2 sm:px-4 max-w-2xl">
+            <div className="text-center mb-6 sm:mb-8 relative px-2 sm:px-4 max-w-2xl">
               <h1 className="text-4xl sm:text-5xl md:text-7xl font-serif tracking-tight text-foreground drop-shadow-[0_0_24px_rgba(168,145,255,0.35)] mb-3 sm:mb-4">
                 Tarotal
               </h1>
@@ -337,7 +337,7 @@ export default function Home() {
 
             {/* Controls */}
             {!isAnalysisComplete && selectedCards.length === 0 && (
-              <div className="mb-8 sm:mb-12">
+              <div className="mb-6 sm:mb-8">
                 <Button
                   onClick={shuffleCards}
                   disabled={isShuffling}
@@ -359,7 +359,7 @@ export default function Home() {
 
             {/* Tarot Deck Area */}
             {!isAnalysisComplete && (
-              <div className="w-full relative mb-12">
+              <div className="w-full relative mb-6 sm:mb-8">
                 {!isAnalysisComplete && selectedCards.length > 0 && (
                   <SelectedCardsSlots
                     selectedCards={selectedCards}

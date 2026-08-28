@@ -24,7 +24,7 @@ export const TarotDeck = React.memo(
         isCardSelected,
     }: TarotDeckProps) => {
         return (
-            <div className="relative w-full max-w-4xl h-[22rem] sm:h-96 mb-6 sm:mb-8 flex items-center justify-center">
+            <div className="relative w-full max-w-4xl mx-auto h-[22rem] sm:h-72 mb-6 sm:mb-8 flex items-center justify-center">
                 {shuffledCards.slice(0, 78).map((card, index) => {
                     const currentPosition = cardPositions[card.name] || {
                         x: 0,

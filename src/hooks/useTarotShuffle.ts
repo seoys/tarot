@@ -297,13 +297,19 @@ export function useTarotShuffle(
         const numCards = cardsToFan.length;
 
         const isSmallScreen = windowSize.width < 768;
-        const fanArc = isSmallScreen ? 140 : 120;
-        const radiusMultiplier = isSmallScreen ? 0.28 : 0.32;
+        // 덱 컨테이너 높이(h-[22rem] / sm:h-96)에 맞춰 부채꼴 크기를 제한한다.
+        const deckHeight = isSmallScreen ? 352 : 384;
+        const fanArc = isSmallScreen ? 140 : 132;
+        const radiusMultiplier = isSmallScreen ? 0.28 : 0.24;
         const fanRadius = Math.min(
             windowSize.width * radiusMultiplier,
-            windowSize.height * 0.35
+            isSmallScreen ? windowSize.height * 0.35 : deckHeight * 0.66
         );
-        const yOffset = fanRadius * 0.7 - windowSize.height * 0.1;
+        const halfArcRad = (fanArc / 2) * (Math.PI / 180);
+        const yOffset = isSmallScreen
+            ? fanRadius * 0.7 - windowSize.height * 0.1
+            : // PC: 부채꼴의 세로 중앙이 컨테이너 중앙에 오도록 정렬 (아래쪽 빈 공간 제거)
+              (fanRadius * (1 + Math.cos(halfArcRad))) / 2;
 
         cardsToFan.forEach((card, index) => {
             const angle =
