@@ -1,0 +1,22 @@
+services:
+  tarot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: tarot-app:latest
+    container_name: tarot-app
+    restart: unless-stopped
+    ports:
+      - "10060:10060"
+    environment:
+      NODE_ENV: production
+      PORT: 10060
+      NEXT_TELEMETRY_DISABLED: "1"
+      # 사용되지 않는 Genkit 경로용(선택). 필요 시 .env 에 정의
+      # GOOGLE_GENAI_API_KEY: ${GOOGLE_GENAI_API_KEY:-}
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:10060/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
