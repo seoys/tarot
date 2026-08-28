@@ -39,10 +39,12 @@ export async function analyzeTarotCards(
   question: string,
   cardsToAnalyze: { name: string; isReversed: boolean }[]
 ): Promise<TarotCard> {
-  console.log(
-    "Sending to API:",
-    JSON.stringify({ userInfo, question, TarotCardData: cardsToAnalyze })
-  );
+  if (process.env.NODE_ENV === "development") {
+    console.log(
+      "Sending to API:",
+      JSON.stringify({ userInfo, question, TarotCardData: cardsToAnalyze })
+    );
+  }
 
   const response = await fetch(
     "https://n8n.sosigi.synology.me/webhook/f53fb29f-c619-4fc1-bd01-6c863e98eb12",
@@ -54,8 +56,6 @@ export async function analyzeTarotCards(
       body: JSON.stringify({ userInfo, question, TarotCardData: cardsToAnalyze }),
     }
   );
-
-  console.log("API Response Status:", response.status);
 
   if (!response.ok) {
     const errorBody = await response.text();
@@ -71,6 +71,5 @@ export async function analyzeTarotCards(
   }
 
   const data: TarotCard = await response.json();
-  console.log("Received data from API:", data);
   return data;
 }

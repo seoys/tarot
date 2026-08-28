@@ -7,9 +7,10 @@ import { cn } from "@/lib/utils";
 
 interface MbtiQuizStepProps {
     onComplete: (info: Partial<UserInfo>) => void;
+    onSkip: () => void;
 }
 
-export function MbtiQuizStep({ onComplete }: MbtiQuizStepProps) {
+export function MbtiQuizStep({ onComplete, onSkip }: MbtiQuizStepProps) {
     const [currentIdx, setCurrentIdx] = useState(0);
     const [answers, setAnswers] = useState<Record<string, number>>({
         E: 0, I: 0,
@@ -105,6 +106,13 @@ export function MbtiQuizStep({ onComplete }: MbtiQuizStepProps) {
                     </div>
                 </div>
             </div>
+
+            <button
+                onClick={onSkip}
+                className="mt-6 text-xs sm:text-sm text-muted-foreground hover:text-foreground underline underline-offset-4 transition-colors"
+            >
+                건너뛰고 바로 타로 보기
+            </button>
         </div>
     );
 }

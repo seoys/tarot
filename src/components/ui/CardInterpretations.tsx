@@ -10,7 +10,7 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { TarotCard } from "@/services/tarot-card-analysis";
+import { ApiTarotCardData, TarotCard } from "@/services/tarot-card-analysis";
 import { tarotCardsData, CARD_BACK_IMAGE } from "@/lib/tarot-data";
 import { UserInfo } from "@/types/user-journey";
 
@@ -86,8 +86,17 @@ const getMbtiReadingNote = (mbti?: string) => {
     return mbtiReadingNotes[mbti] ?? null;
 };
 
+function escapeHtml(text: string) {
+    return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+}
+
 export function highlightOutput(text: string) {
-    let processed = text
+    let processed = escapeHtml(text)
         // Headers (H2 and H3)
         .replace(/^##\s+(.*)/gm, '<h2 class="text-2xl font-serif font-bold text-foreground mt-8 mb-4 pb-2 border-b border-white/10">$1</h2>')
         .replace(/^###\s+(.*)/gm, '<h3 class="text-xl font-bold text-foreground mt-6 mb-3">$1</h3>')
@@ -126,8 +135,14 @@ function parseReadingSections(output: string) {
     }));
 }
 
+interface N8nOutputEntry {
+    output: string;
+}
+
+type CardInterpretationsData = TarotCard | N8nOutputEntry[] | null;
+
 interface CardInterpretationsProps {
-    cardInterpretations: TarotCard | any | null;
+    cardInterpretations: CardInterpretationsData;
     clearInterpretations: () => void;
     isOutputModalOpen: boolean;
     setIsOutputModalOpen: (open: boolean) => void;
@@ -163,7 +178,14 @@ export function CardInterpretations({
 
     if (!cardInterpretations) return null;
 
-    const rawOutput: string = cardInterpretations?.[0]?.output ?? "";
+    const n8nOutput: N8nOutputEntry[] | null = Array.isArray(cardInterpretations)
+        ? cardInterpretations
+        : null;
+    const tarotCardResult: TarotCard | null = Array.isArray(cardInterpretations)
+        ? null
+        : cardInterpretations;
+
+    const rawOutput: string = n8nOutput?.[0]?.output ?? "";
     const readingSections = parseReadingSections(rawOutput);
     const moodSection = readingSections[0];
     const openingText =
@@ -210,14 +232,14 @@ export function CardInterpretations({
 
     return (
         <>
-            {cardInterpretations.TarotCardData &&
-                cardInterpretations.TarotCardData.length > 0 && (
+            {tarotCardResult?.TarotCardData &&
+                tarotCardResult.TarotCardData.length > 0 && (
                     <div className="mt-8 w-full max-w-4xl p-6 bg-white/[0.04] backdrop-blur-2xl rounded-[2rem] shadow-[0_24px_70px_-35px_rgba(168,145,255,0.35)] relative z-10 border border-white/10">
                         <h2 className="text-3xl font-semibold mb-6 text-center text-foreground font-serif animate-in fade-in duration-500">
                             카드 요약
                         </h2>
                         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 animate-in fade-in slide-in-from-bottom-3 duration-700">
-                            {cardInterpretations.TarotCardData.map((card: any, index: number) => {
+                            {tarotCardResult.TarotCardData.map((card: ApiTarotCardData, index: number) => {
                                 const displayCard = tarotCardsData.find(
                                     (dc) => dc.name === card.name
                                 );
@@ -251,8 +273,7 @@ export function CardInterpretations({
                     </div>
                 )}
 
-            {Array.isArray(cardInterpretations) &&
-                cardInterpretations[0]?.output &&
+            {n8nOutput?.[0]?.output &&
                 isOutputModalOpen && createPortal(
                     <div className="fixed inset-0 z-[5000] flex items-stretch justify-center p-2 sm:items-center sm:p-4 bg-background/75 backdrop-blur-md animate-in fade-in duration-500">
                         <div
@@ -363,7 +384,7 @@ export function CardInterpretations({
                                     </div>
                                     {showDetails && (
                                         <div className="text-foreground/95 text-[16px] md:text-[17px] leading-[1.95] md:leading-[2.1] tracking-normal animate-in fade-in slide-in-from-bottom-2 duration-300">
-                                            {highlightOutput(cardInterpretations[0].output)}
+                                            {highlightOutput(n8nOutput[0].output)}
                                         </div>
                                     )}
                                 </div>

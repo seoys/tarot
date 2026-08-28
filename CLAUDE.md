@@ -44,6 +44,9 @@ All state lives in `src/app/page.tsx` (no global store). Key state:
 - `cardInterpretations` — API response (`TarotCard`) rendered by `CardInterpretations`
 - `step` / `userInfo` — funnel state passed down to step components
 
+### Auth (unused stub)
+`src/app/login/page.tsx` is a standalone login form with a `TODO` for real auth (Firebase/Supabase) — not wired into the funnel in `page.tsx` and not part of the current user journey.
+
 ### Key Data Files
 - `src/lib/tarot-data.ts` — full 78-card deck definitions (`TarotCardDisplayData`), card image paths, `CARD_BACK_IMAGE`
 - `src/lib/mbti-data.ts` — MBTI quiz questions (`MbtiQuestion[]`)

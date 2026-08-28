@@ -77,16 +77,24 @@ export default function Home() {
   const [previewCardName, setPreviewCardName] = useState<string | null>(null); // Renamed to avoid conflict
 
   useEffect(() => {
-    const handleResize = () => {
-      if (typeof window !== "undefined") {
-        setWindowSize({ width: window.innerWidth, height: window.innerHeight });
-      }
+    if (typeof window === "undefined") return;
+
+    const updateSize = () => {
+      setWindowSize({ width: window.innerWidth, height: window.innerHeight });
     };
-    if (typeof window !== "undefined") {
-      handleResize(); // Initial size
-      window.addEventListener("resize", handleResize);
-      return () => window.removeEventListener("resize", handleResize);
-    }
+
+    let resizeTimeout: ReturnType<typeof setTimeout>;
+    const handleResize = () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(updateSize, 150);
+    };
+
+    updateSize(); // Initial size
+    window.addEventListener("resize", handleResize);
+    return () => {
+      clearTimeout(resizeTimeout);
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
 
   const cardPositions = useTarotShuffle(
@@ -258,8 +266,6 @@ export default function Home() {
 
   // Renamed for clarity in the context of the diff
   const shuffleCards = handleShuffle;
-  const handleCardClick = toggleCardSelection;
-  const error = null; // Placeholder for error state
 
   return (
     <main className="min-h-screen relative flex flex-col items-center justify-center p-4 sm:p-8 md:p-24 overflow-hidden bg-background selection:bg-primary/20">
@@ -277,7 +283,10 @@ export default function Home() {
         )}
 
         {step === 'mbti' && (
-          <MbtiQuizStep onComplete={handleMbtiComplete} />
+          <MbtiQuizStep
+            onComplete={handleMbtiComplete}
+            onSkip={() => setStep('tarot')}
+          />
         )}
 
         {step === 'tarot' && (
@@ -288,7 +297,7 @@ export default function Home() {
                 Tarotal
               </h1>
               <p className="text-base sm:text-lg md:text-xl text-muted-foreground font-light max-w-lg sm:max-w-xl mx-auto leading-relaxed px-2 sm:px-0">
-                {userInfo.mbti}의 흐름을 읽고 5장의 패를 고르십시오.
+                {userInfo.mbti ? `${userInfo.mbti}의 흐름을 읽고 ` : ""}5장의 패를 고르십시오.
               </p>
             </div>
 
@@ -347,13 +356,6 @@ export default function Home() {
                   <LoadingIndicator phaseIndex={analysisPhaseIndex} />
                 </div>
               )}
-
-            {/* Error State */}
-            {error && (
-              <div className="mb-8 p-4 bg-destructive/20 border border-destructive/50 rounded-xl text-destructive text-center max-w-md w-full backdrop-blur-md">
-                {error}
-              </div>
-            )}
 
             {/* Tarot Deck Area */}
             {!isAnalysisComplete && (

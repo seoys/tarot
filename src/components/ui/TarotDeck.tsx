@@ -33,16 +33,21 @@ export const TarotDeck = React.memo(
                         scale: 1,
                     };
                     const selected = isCardSelected(card.name);
+                    const disabled = isLoading || isShuffling;
                     return (
-                        <div
+                        <button
                             key={card.name}
+                            type="button"
                             onClick={() => toggleCardSelection(card.name)}
+                            disabled={disabled}
+                            aria-label={selected ? "선택한 카드 해제하기" : "카드 선택하기"}
+                            aria-pressed={selected}
                             className={cn(
-                                "absolute cursor-pointer transition-all duration-700 will-change-transform",
+                                "absolute appearance-none bg-transparent border-0 p-0 m-0 cursor-pointer transition-all duration-700 will-change-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:z-30",
                                 selected
                                     ? "opacity-0 pointer-events-none scale-0"
                                     : "opacity-100 hover:z-20 hover:scale-[1.03] sm:hover:scale-105 shadow-lg",
-                                isLoading || isShuffling ? "pointer-events-none opacity-50" : ""
+                                disabled ? "pointer-events-none opacity-50" : ""
                             )}
                             style={{
                                 transform: `perspective(1000px) translate(${currentPosition.x}px, ${currentPosition.y}px) rotate(${currentPosition.rotate}deg) rotateX(${currentPosition.rotateX || 0}deg) rotateY(${currentPosition.rotateY || 0}deg) scale(${selected ? 0 : currentPosition.scale})`,
@@ -51,7 +56,7 @@ export const TarotDeck = React.memo(
                         >
                             <Image
                                 src={CARD_BACK_IMAGE}
-                                alt={card.name}
+                                alt="타로 카드 뒷면"
                                 className={cn(
                                     "rounded-lg object-cover w-12 sm:w-16 h-auto border border-white/10 shadow-[0_8px_24px_-12px_rgba(168,145,255,0.45)]"
                                 )}
@@ -60,7 +65,7 @@ export const TarotDeck = React.memo(
                                 priority={index < 10}
                                 data-ai-hint="tarot card"
                             />
-                        </div>
+                        </button>
                     );
                 })}
             </div>
